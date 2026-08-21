@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ run.label }}{% endblock %}
+{% block content %}
+<section class="run-hero">
+  <a class="back-link" href="{{ url_for('index') }}">← Leaderboards</a>
+  <p class="eyebrow">BENCHMARK RUN</p>
+  <h1>{{ run.label }}</h1>
+  <div class="run-tags">
+    <span>{{ run.status }}</span>
+    <span>{{ '%.1f'|format(run.duration_seconds) }} seconds</span>
+    <span>{{ run.profile }}</span>
+    {% if run.machine_id %}<span>Machine {{ run.machine_id }}</span>{% endif %}
+    {% if run.offer_id %}<span>Offer {{ run.offer_id }}</span>{% endif %}
+  </div>
+</section>
+
+<section class="system-grid">
+  <article><span>GPU</span><strong>{{ run.gpu_summary }}</strong></article>
+  <article><span>CPU</span><strong>{{ run.cpu_model }}</strong></article>
+  <article><span>Effective cores</span><strong>{{ run.cpu_effective }}</strong></article>
+  <article><span>Hourly rate</span><strong>{% if run.hourly_rate is not none %}${{ '%.3f'|format(run.hourly_rate) }}{% else %}Local{% endif %}</strong></article>
+</section>
+
+{% if run.errors %}
+<section class="warning-panel">
+  <strong>Run diagnostics</strong>
+  {% for error in run.errors %}<p>{{ error }}</p>{% endfor %}
+</section>
+{% endif %}
+
+{% for category, metrics in categories.items() %}
+<section class="panel metric-panel">
+  <div class="section-heading"><h2>{{ category|upper }}</h2><span>{{ metrics|length }} metrics</span></div>
+  <div class="metric-table">
+    {% for metric in metrics %}
+    <div class="metric-row">
+      <span>{{ metric.name }}</span>
+      <strong>{{ '%.3f'|format(metric.value) }} <small>{{ metric.unit }}</small></strong>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+<section class="panel raw-meta">
+  <div class="section-heading"><h2>Environment</h2></div>
+  <dl>
+    <dt>Hostname</dt><dd>{{ run.hostname }}</dd>
+    <dt>Platform</dt><dd>{{ run.system.platform }}</dd>
+    <dt>Python</dt><dd>{{ run.system.python_version }}</dd>
+    <dt>PyTorch</dt><dd>{{ run.system.torch_version or 'Unavailable' }}</dd>
+    <dt>CUDA</dt><dd>{{ run.system.torch_cuda_version or 'Unavailable' }}</dd>
+    <dt>Finished</dt><dd>{{ run.finished_at }}</dd>
+  </dl>
+</section>
+{% endblock %}

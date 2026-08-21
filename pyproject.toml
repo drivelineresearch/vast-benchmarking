@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vast-benchmarking"
+version = "0.1.0"
+description = "Bounded Vast.ai hardware benchmark and Driveline leaderboard"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "Flask>=3.0,<4",
+  "numpy>=1.26,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+  "ruff>=0.9,<1",
+]
+
+[project.scripts]
+vast-benchmark = "vast_benchmarking.cli:main"
+vast-benchmark-runner = "vast_benchmarking.vast_runner:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+vast_benchmarking = ["templates/*.html", "static/*.css", "static/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

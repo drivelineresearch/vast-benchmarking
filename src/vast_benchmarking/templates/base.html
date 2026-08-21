@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>{% block title %}Vast Bench Lab{% endblock %} · Driveline</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Vast Bench Lab home">
+        <span class="brand-mark">D</span>
+        <span>
+          <strong>DRIVELINE</strong>
+          <small>VAST BENCH LAB</small>
+        </span>
+      </a>
+      <div class="header-status">
+        <span class="status-dot"></span>
+        SQLite-backed results
+      </div>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    <footer>
+      <span>Driveline Research</span>
+      <span>Raw metrics first. Relative scores are percent-of-best within this database.</span>
+    </footer>
+  </body>
+</html>

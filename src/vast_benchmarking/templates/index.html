@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">HARDWARE INTELLIGENCE</p>
+    <h1>Which machine<br><span>actually performs?</span></h1>
+    <p class="hero-copy">
+      A bounded, reproducible stress test for CV-heavy GPUs, effective CPU concurrency,
+      memory throughput, and durable disk speed.
+    </p>
+  </div>
+  <div class="hero-meta">
+    <span>Latest snapshot</span>
+    <strong>{{ runs[0].finished_at[:19].replace('T', ' ') if runs else 'No runs yet' }}</strong>
+    <span>Benchmark status</span>
+    <strong>{{ summary.complete_count }} accepted / {{ summary.run_count }} stored</strong>
+  </div>
+</section>
+
+<section class="kpi-grid" aria-label="Benchmark summary">
+  <article class="kpi"><span>Runs</span><strong>{{ summary.run_count }}</strong><small>stored results</small></article>
+  <article class="kpi"><span>Machines</span><strong>{{ summary.machine_count }}</strong><small>Vast hosts</small></article>
+  <article class="kpi"><span>GPUs tested</span><strong>{{ summary.gpu_count }}</strong><small>concurrent devices</small></article>
+  <article class="kpi accent"><span>Estimated spend</span><strong>${{ '%.2f'|format(rentals.estimated_cost or 0) }}</strong><small>$5.00 hard cap</small></article>
+</section>
+
+<section class="panel composite-panel">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">RELATIVE COMPOSITE</p>
+      <h2>Overall leaderboard</h2>
+    </div>
+    <p>Geometric mean of available category metrics, normalized to the best stored result.</p>
+  </div>
+  {% if runs %}
+  <div class="ranking-list">
+    {% for run in runs %}
+    <a class="ranking-row" href="{{ url_for('run_detail', run_id=run.run_id) }}">
+      <span class="rank">{{ loop.index }}</span>
+      <span class="machine">
+        <strong>{{ run.label }}</strong>
+        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
+      </span>
+      <span class="score-bar"><i style="width: {{ '%.1f'|format(run.relative_score) }}%"></i></span>
+      <strong class="score">{{ '%.1f'|format(run.relative_score) }}</strong>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <strong>No benchmark results yet.</strong>
+    <span>Run the benchmark or ingest a result JSON to populate this view.</span>
+  </div>
+  {% endif %}
+</section>
+
+<section class="leaderboard-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">RAW PERFORMANCE</p>
+      <h2>Category leaders</h2>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Leaderboard category">
+      {% for key, board in leaderboards.items() %}
+      <button class="tab{% if loop.first %} active{% endif %}" data-tab="{{ key }}" type="button">{{ board.title }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% for key, board in leaderboards.items() %}
+  <div class="category-board{% if loop.first %} active{% endif %}" data-panel="{{ key }}">
+    {% if board.rows %}
+      {% set top_value = board.rows[0].value %}
+      {% for row in board.rows %}
+      <a class="category-row" href="{{ url_for('run_detail', run_id=row.run_id) }}">
+        <span class="rank">{{ loop.index }}</span>
+        <span class="machine"><strong>{{ row.label }}</strong><small>{{ row.gpu_summary }}</small></span>
+        <span class="category-bar"><i style="width: {{ '%.1f'|format((row.value / top_value * 100) if top_value else 0) }}%"></i></span>
+        <span class="metric-value"><strong>{{ '%.2f'|format(row.value) }}</strong> {{ row.unit }}</span>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state"><strong>No {{ board.title|lower }} data yet.</strong></div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+
+<section class="panel methodology">
+  <div>
+    <p class="eyebrow">METHOD</p>
+    <h2>Designed for a ten-minute ceiling</h2>
+  </div>
+  <div class="method-grid">
+    <article><strong>GPU intensity</strong><p>Concurrent FP16 GEMM at three matrix sizes plus a CV convolution stack on every visible GPU.</p></article>
+    <article><strong>CPU reality</strong><p>Uses the lower of container CPU affinity and cgroup quota as effective cores, then measures single-thread and all-core SHA-256 plus Torch matmul.</p></article>
+    <article><strong>I/O truth</strong><p>RAM copy/fill/scale and fsync-backed sequential disk writes with cache-drop advice before reads.</p></article>
+  </div>
+</section>
+{% endblock %}
