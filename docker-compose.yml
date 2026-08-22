@@ -1,0 +1,30 @@
+services:
+  benchmark:
+    build: .
+    gpus: all
+    volumes:
+      - ./results:/results
+      - /tmp:/benchmark-disk
+    command:
+      - run
+      - --db
+      - /results/benchmarks.sqlite
+      - --output
+      - /results/latest.json
+      - --disk-dir
+      - /benchmark-disk
+
+  dashboard:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./results:/results
+    command:
+      - serve
+      - --db
+      - /results/benchmarks.sqlite
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"

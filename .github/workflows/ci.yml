@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check src tests scripts
+      - name: Test
+        run: pytest
+      - name: Check dashboard JavaScript
+        run: node --check src/vast_benchmarking/static/app.js
+      - name: Check documentation links
+        run: python scripts/check_markdown_links.py
+      - name: Build and inspect distributions
+        run: |
+          python -m build
+          python scripts/check_distribution.py

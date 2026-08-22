@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a reproducible benchmark, runner, storage, or dashboard defect.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Do not include API keys, SSH material, private host addresses, or account data.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Benchmark workload
+        - Vast runner
+        - Result validation or storage
+        - Dashboard
+        - Packaging or deployment
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include the profile, sanitized hardware summary, expected result, and actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized diagnostics
+      description: Remove credentials, addresses, provider account details, and raw private paths.

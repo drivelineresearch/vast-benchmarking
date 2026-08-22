@@ -1,0 +1,134 @@
+from __future__ import annotations
+
+from copy import deepcopy
+
+from vast_benchmarking.models import BenchmarkResult
+from vast_benchmarking.storage import save_machine_annotations, save_result
+from vast_benchmarking.web import create_app
+
+
+def test_dashboard_and_detail_render(tmp_path, sample_result: BenchmarkResult) -> None:
+    database = tmp_path / "benchmarks.sqlite"
+    save_result(database, sample_result)
+    save_machine_annotations(
+        database,
+        [
+            {
+                "machine_id": 456,
+                "category": "gpu-heavy",
+                "disposition": "recommended",
+                "rating": "A",
+                "notes": "Strong CV throughput.",
+                "tags": ["cv"],
+            }
+        ],
+    )
+    app = create_app(str(database))
+    app.config.update(TESTING=True)
+
+    client = app.test_client()
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"Sample GPU Host" in response.data
+    assert b"Overall leaderboard" not in response.data
+    assert b"Category rankings" in response.data
+    assert b"Measured performance" in response.data
+    assert b"Hourly rental price" not in response.data
+    assert b"Max performance" in response.data
+    assert b"Best perf / $" in response.data
+    assert b"100.0% of best" in response.data
+    assert b"4.80k perf/$" in response.data
+    assert b'href="/static/favicon.ico"' in response.data
+    assert b'href="/static/favicon-32.png"' in response.data
+    assert b'href="/static/apple-touch-icon.png"' in response.data
+    assert b'<meta name="color-scheme" content="light">' in response.data
+    assert b"Machine #456" in response.data
+    assert b"Offer #123" in response.data
+    assert b"Instance #789" in response.data
+    assert b"$0.500" in response.data
+    assert b"All run history" in response.data
+    assert b"accepted" in response.data
+    assert b"Ratings and known issues" in response.data
+    assert b"Strong CV throughput" in response.data
+
+    response = client.get("/api/runs")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert len(payload["all_runs"]) == 1
+    row = payload["leaderboards"]["gpu_cv"]["rows"][0]
+    assert row["machine_id"] == 456
+    assert row["offer_id"] == 123
+    assert row["instance_id"] == 789
+    assert row["hourly_rate"] == 0.5
+    assert row["performance_percent"] == 100
+    assert row["value_per_dollar"] == 4800
+    assert row["value_per_dollar_percent"] == 100
+    assert row["value_per_dollar_display"] == "4.80k"
+
+    response = client.get(f"/runs/{sample_result.run_id}")
+    assert response.status_code == 200
+    assert b"gpu.concurrent.cv_images_per_sec_total" in response.data
+
+    response = client.get("/healthz")
+    assert response.status_code == 200
+    assert response.get_json()["ok"] is True
+
+    response = client.get("/static/favicon.ico")
+    assert response.status_code == 200
+    assert response.content_type == "image/vnd.microsoft.icon"
+
+    response = client.get("/static/fonts/Geist-Variable.woff2")
+    assert response.status_code == 200
+    assert response.content_type == "font/woff2"
+
+    response = client.get("/static/app.css")
+    assert b'font-family: "Geist"' in response.data
+    assert b"--panel: #ffffff" in response.data
+
+
+def test_forwarded_prefix_is_used_for_links(tmp_path, sample_result: BenchmarkResult) -> None:
+    database = tmp_path / "benchmarks.sqlite"
+    save_result(database, sample_result)
+    app = create_app(str(database))
+    app.config.update(TESTING=True)
+
+    response = app.test_client().get(
+        "/",
+        headers={
+            "X-Forwarded-Host": "benchmark.example.com",
+            "X-Forwarded-Proto": "https",
+            "X-Forwarded-Prefix": "/vast-benchmark",
+        },
+    )
+
+    assert response.status_code == 200
+    assert b'href="/vast-benchmark/static/app.css"' in response.data
+    assert b'href="/vast-benchmark/runs/' in response.data
+
+
+def test_dashboard_normalizes_performance_and_value_independently(
+    tmp_path, sample_result: BenchmarkResult
+) -> None:
+    database = tmp_path / "benchmarks.sqlite"
+    save_result(database, sample_result)
+
+    value_leader = deepcopy(sample_result)
+    value_leader.run_id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    value_leader.label = "Efficient GPU Host"
+    value_leader.vast.update(
+        {"machine_id": 457, "offer_id": 124, "instance_id": 790, "hourly_rate": 0.1}
+    )
+    for metric in value_leader.metrics:
+        if metric.name == "gpu.concurrent.cv_images_per_sec_total":
+            metric.value = 1200
+    save_result(database, value_leader)
+
+    app = create_app(str(database))
+    app.config.update(TESTING=True)
+    rows = app.test_client().get("/api/runs").get_json()["leaderboards"]["gpu_cv"]["rows"]
+
+    assert [row["machine_id"] for row in rows] == [456, 457]
+    assert rows[0]["performance_percent"] == 100
+    assert rows[1]["performance_percent"] == 50
+    assert rows[0]["value_per_dollar_percent"] == 40
+    assert rows[1]["value_per_dollar_percent"] == 100

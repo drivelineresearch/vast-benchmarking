@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#fafafa">
+    <title>{% block title %}Vast Bench Lab{% endblock %} · Driveline</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Vast Bench Lab home">
+        <span class="brand-mark">D</span>
+        <span>
+          <strong>DRIVELINE</strong>
+          <small>VAST BENCH LAB</small>
+        </span>
+      </a>
+      <div class="header-status">
+        <span class="status-dot"></span>
+        SQLite-backed results
+      </div>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    <footer>
+      <span>Driveline Research</span>
+      <span>Raw benchmark metrics and rental prices captured at run time.</span>
+    </footer>
+  </body>
+</html>
