@@ -1,7 +1,7 @@
 ## Summary
 
-Describe the outcome and the benchmark, orchestration, storage, or dashboard behavior it
-changes.
+Explain what changed and name any affected benchmark, orchestration, storage, or
+dashboard behavior.
 
 ## Verification
 

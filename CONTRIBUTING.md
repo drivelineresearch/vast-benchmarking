@@ -1,4 +1,4 @@
-# 🧰 Contributing
+# Contributing
 
 Use Python 3.10 or newer and keep benchmark changes bounded by the existing wall-clock
 budget. Before opening a pull request:
@@ -22,10 +22,10 @@ Performance changes should document the profile, hardware scope, metric units, a
 acceptance-rule change. Marketplace price is historical context captured at run time,
 not a current quote.
 
-## 📚 Documentation
+## Documentation
 
-Keep the root README short. Put measured snapshots under `docs/benchmarks/`, user and
-operator guides under `docs/`, durable coding-agent contracts under `agent_docs/`, and
-generated campaign evidence under `reports/`.
+Keep the root README short. Measured snapshots belong in `docs/benchmarks/`; user and
+operator guides go in `docs/`. Put durable coding-agent contracts in `agent_docs/` and
+generated campaign evidence in `reports/`.
 
 Use descriptive link text and run the local-link check before opening a pull request.

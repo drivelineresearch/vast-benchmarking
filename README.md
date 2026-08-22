@@ -10,39 +10,40 @@
 </p>
 
 <p align="center">
-  <a href="docs/benchmarks/2026-08-22-demo.md">📊 Demo results</a> ·
-  <a href="docs/benchmark-methodology.md">🧪 Methodology</a> ·
-  <a href="docs/running-on-vast.md">☁️ Vast.ai runner</a> ·
-  <a href="docs/README.md">📚 Documentation</a>
+  <a href="docs/benchmarks/2026-08-22-demo.md">Demo results</a> ·
+  <a href="docs/benchmark-methodology.md">Methodology</a> ·
+  <a href="docs/running-on-vast.md">Vast.ai runner</a> ·
+  <a href="docs/README.md">Documentation</a>
 </p>
 
-## 🚀 Overview
+## Overview
 
 Vast Benchmarking is a bounded Python benchmark for comparing Vast.ai Docker offers on
 computer-vision GPU throughput, effective CPU concurrency, single-thread CPU speed,
 memory throughput, and storage performance.
 
-It produces portable JSON, stores normalized results in SQLite, and serves a Flask
-dashboard with category rankings and machine-level notes.
+Each run produces portable JSON. The project can also store normalized results in
+SQLite and serve them through a Flask dashboard with category rankings and notes for
+individual machines.
 
 > [!IMPORTANT]
 > The standard profile has a hard **540-second wall-clock budget**. Marketplace core
 > counts and prices are context; rankings use capacity measured inside the container.
 
-## 📊 Measured demo
+## Measured demo
 
-The sanitized demo snapshot contains **19 stored runs**, **15 accepted machines**, and
-**60 successfully tested GPUs**. Its category leaders include:
+The demo snapshot has 19 stored runs from 15 accepted machines. In all, 60 GPUs finished
+the test. The leading results are:
 
-- **118,420.80 images/s** of concurrent GPU CV throughput
-- **598.504 TFLOP/s** of aggregate FP16 compute
-- **368.64 effective CPU cores** measured inside one rental
-- **5.333 GB/s** of single-thread SHA-256 throughput
+- 118,420.80 images/s of concurrent GPU CV throughput
+- 598.504 TFLOP/s of aggregate FP16 compute
+- 368.64 effective CPU cores inside one rental
+- 5.333 GB/s of single-thread SHA-256 throughput
 
 See the [full demo benchmark snapshot](docs/benchmarks/2026-08-22-demo.md) for machine
 IDs, exact results, historical rental rates, campaign cost, and acceptance caveats.
 
-## 🧪 Workloads
+## Workloads
 
 | Area | What is measured |
 | --- | --- |
@@ -55,7 +56,7 @@ IDs, exact results, historical rental rates, campaign cost, and acceptance cavea
 The detailed contracts and interpretation rules live in
 [benchmark methodology](docs/benchmark-methodology.md).
 
-## ⚡ Quick start
+## Quick start
 
 ```bash
 uv sync --extra dev --extra server
@@ -74,26 +75,26 @@ uv run vast-benchmark serve \
 Open <http://127.0.0.1:8080>. Health is available at `/healthz`, and normalized data at
 `/api/runs`.
 
-## ☁️ Docker and Vast.ai
+## Docker and Vast.ai
 
 ```bash
 docker compose run --rm benchmark
 docker compose up dashboard
 ```
 
-The controller can validate a single offer or launch a bounded parallel campaign with
-hourly-price checks, projected-spend enforcement, key-only SSH, exact-instance cleanup,
-and partial-result rejection.
+The controller can benchmark one offer or run a bounded batch. Before renting anything,
+it checks the hourly rate and worst-case spend. It connects over key-only SSH, rejects
+partial results, and destroys the exact instance it created.
 
 Read [running on Vast.ai](docs/running-on-vast.md) before using paid infrastructure.
 
 > [!NOTE]
-> **Referral disclosure:** [Create a Vast.ai account with this referral link](https://cloud.vast.ai/?ref_id=77898).
+> Referral disclosure: [Create a Vast.ai account with this referral link](https://cloud.vast.ai/?ref_id=77898).
 > If you sign up through it, the project maintainer may receive Vast.ai account credit.
 > The referral has no effect on benchmark selection, rankings, methodology, or reported
 > prices.
 
-## 🛡️ Safety model
+## Safety model
 
 - Provider credentials stay on the controller and are never copied to rented hosts.
 - Partial GPU runs and superseded results remain inspectable but do not enter rankings.
@@ -102,7 +103,7 @@ Read [running on Vast.ai](docs/running-on-vast.md) before using paid infrastruct
 
 See [Security](SECURITY.md) and the [public-release checklist](docs/PUBLIC_RELEASE.md).
 
-## 📚 Documentation
+## Documentation
 
 | Guide | Purpose |
 | --- | --- |
@@ -113,7 +114,7 @@ See [Security](SECURITY.md) and the [public-release checklist](docs/PUBLIC_RELEA
 | [Self-hosting](docs/self-hosting.md) | Generic Flask, Gunicorn, and reverse-proxy deployment |
 | [Contributing](CONTRIBUTING.md) | Development and pull-request expectations |
 
-## 🧰 Development
+## Development
 
 ```bash
 uv run ruff check src tests scripts
@@ -125,12 +126,12 @@ uv build
 uv run python scripts/check_distribution.py
 ```
 
-## 📦 Releases
+## Releases
 
 Versioned wheels, source archives, and checksums are published through
 [GitHub Releases](https://github.com/drivelineresearch/vast-benchmarking/releases).
 PyTorch remains an environment dependency supplied by the CUDA container.
 
-## 📜 License
+## License
 
 Vast Benchmarking is available under the [MIT License](LICENSE).

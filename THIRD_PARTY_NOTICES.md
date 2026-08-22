@@ -2,7 +2,7 @@
 
 ## Geist font
 
-The dashboard bundles Geist Sans and Geist Mono variable webfonts from Vercel's
+The dashboard includes the Geist Sans and Geist Mono variable webfonts from Vercel's
 `geist-font` v1.7.2 release.
 
 - Source: <https://github.com/vercel/geist-font>

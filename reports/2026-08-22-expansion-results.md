@@ -1,4 +1,4 @@
-# Vast Benchmark Expansion Results
+# Vast benchmark expansion results
 
 Generated: 2026-08-22T09:40:56.424850+00:00
 

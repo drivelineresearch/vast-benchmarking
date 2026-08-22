@@ -65,9 +65,9 @@ class VastClient:
                 break
             except urllib.error.HTTPError as exc:
                 body = exc.read().decode(errors="replace")[:1000]
-                # Do not blindly replay instance-creation PUTs. A provider may
-                # have accepted the rental even if the response was throttled,
-                # and a replay could create an orphaned second instance.
+                # Instance creation is not safe to retry blindly. Vast may accept the
+                # rental before a throttled response reaches us; replaying the PUT can
+                # leave a second instance running.
                 if exc.code == 429 and method != "PUT" and attempt < 4:
                     retry_after = exc.headers.get("Retry-After", "") if exc.headers else ""
                     try:

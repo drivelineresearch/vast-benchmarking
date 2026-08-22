@@ -87,8 +87,8 @@ def _wait_for_running(client: VastClient, instance_id: int, timeout_seconds: int
             return instance
         if last_status in {"exited", "offline", "destroyed"}:
             raise VastAPIError(f"instance {instance_id} entered terminal status {last_status}")
-        # Parallel batches otherwise synchronize their API polls and can exceed
-        # Vast's per-client request threshold.
+        # Batch workers can line up their polls and trip Vast's per-client request
+        # limit, so offset each interval by instance ID.
         time.sleep(12 + instance_id % 6)
     raise VastAPIError(
         f"instance {instance_id} did not become SSH-ready, last status {last_status}"
@@ -413,8 +413,8 @@ def run_offer(args: argparse.Namespace) -> int:
                 ),
                 flush=True,
             )
-    # Exit non-zero for partial benchmarks after ingesting their diagnostics so
-    # batch orchestration can replace them instead of counting them as accepted.
+    # Keep diagnostics from a partial benchmark, but return nonzero so the batch
+    # runner replaces the machine instead of accepting the result.
     return 0 if benchmark_returncode == 0 and result_path else 1
 
 

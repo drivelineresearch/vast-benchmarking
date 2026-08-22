@@ -1,10 +1,10 @@
-# 🏠 Self-hosting the dashboard
+# Self-hosting the dashboard
 
 The dashboard is a read-only Flask view over a SQLite result database. A production
 deployment should run Gunicorn on loopback and place TLS, authentication, and any URL
 prefix at a reverse proxy.
 
-## 📦 Portable layout
+## Portable layout
 
 One conventional layout is:
 
@@ -16,7 +16,7 @@ One conventional layout is:
 Keep the database outside replaceable application directories, and back it up before
 upgrading or changing the schema.
 
-## ⚙️ Run with Gunicorn
+## Run with Gunicorn
 
 ```bash
 uv sync --extra server
@@ -27,17 +27,17 @@ uv run gunicorn \
 ```
 
 The tracked files in `deploy/` are portable examples. Review their user, group, paths,
-port, and environment before installing them; they are not drop-in declarations of a
-particular host.
+port, and environment before installing them. They are examples, not a declaration of
+how any particular host is configured.
 
-## 🌐 Reverse proxy
+## Reverse proxy
 
 Proxy an HTTPS route to the loopback listener. When serving below a path prefix such as
 `/benchmarks/`, forward the original scheme, host, and prefix headers so Flask generates
 correct links. Restrict access at the proxy if machine inventory or pricing data should
 not be public.
 
-## ✅ Verification
+## Verification
 
 After a deployment:
 

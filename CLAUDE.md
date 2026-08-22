@@ -2,11 +2,11 @@
 
 ## Why this project exists
 
-Vast Benchmarking measures the hardware capacity a rented Docker container can actually
-use. It emphasizes CV-heavy multi-GPU work, effective CPU concurrency, single-thread CPU
-speed, memory bandwidth, and durable disk throughput. Runs must stay bounded, portable,
-and auditable because provider time costs money and marketplace specifications can differ
-from container-visible capacity.
+Vast Benchmarking measures how much hardware a rented Docker container can actually
+use. The tests cover CV-heavy multi-GPU work, effective CPU concurrency, single-thread
+CPU speed, memory bandwidth, and durable disk throughput. Runs stay bounded and
+auditable because provider time costs money and listed specifications do not always
+match the capacity exposed to a container.
 
 ## What is in the repository
 
@@ -53,7 +53,7 @@ Read the focused docs before these task types:
   `docs/self-hosting.md`
 - Repository visibility changes: `docs/PUBLIC_RELEASE.md`
 
-## Non-negotiable boundaries
+## Rules that must not change
 
 - Never start a paid Vast rental unless the user explicitly authorizes that rental or
   campaign and its cost ceiling.
@@ -68,7 +68,7 @@ Read the focused docs before these task types:
 - Repository history rewriting and visibility changes require explicit owner approval.
 
 <!-- AGENT-MANAGED SECTION -->
-<!-- Agents may add durable, broadly useful discoveries below this line. -->
+<!-- Agents may add short, broadly useful findings below this line. -->
 
 ## Discovered patterns
 

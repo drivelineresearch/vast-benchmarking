@@ -1,15 +1,14 @@
-# 📋 Public-release TODO
+# Project TODO
 
-The repository contents and package artifacts are prepared. These remaining items need
-an owner or organization-level decision before changing GitHub visibility.
+Release packaging and repository safeguards are in place. A few policy and hosting
+decisions are still open.
 
 ## Owner decisions
 
 - [x] Choose and add an open-source license: MIT.
 - [ ] Choose the support policy for public issues and discussions.
 - [x] Configure `main` branch protection and required checks.
-- [ ] Change repository visibility only after the release workflows pass on the final
-  commit.
+- [x] Make the repository public after the v0.1.1 release checks pass.
 
 ## Documentation follow-up
 
@@ -29,3 +28,4 @@ an owner or organization-level decision before changing GitHub visibility.
 - [x] Protected `main` with strict CI checks, one approval, stale-review dismissal,
   conversation resolution, linear history, and force-push/deletion prevention.
 - [x] Rewrote the repository to one sanitized public-release commit.
+- [x] Edited all Markdown and explanatory code comments with the humanizer review.

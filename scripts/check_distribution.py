@@ -14,6 +14,7 @@ EXPECTED_SDIST = {
     "LICENSE",
     "docs/benchmarks/2026-08-22-demo.md",
     "docs/benchmark-methodology.md",
+    "docs/releases/v0.1.1.md",
     "docs/running-on-vast.md",
     "docs/self-hosting.md",
     "scripts/check_distribution.py",

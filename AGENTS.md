@@ -1,7 +1,7 @@
 # Agent entrypoint
 
-Read `CLAUDE.md` completely before modifying this repository. It is the authoritative
-WHAT/WHY/HOW guide for all coding agents.
+Read `CLAUDE.md` completely before modifying this repository. It explains what the
+project does, why its constraints exist, and how to work here safely.
 
 Load only the focused document needed for the task:
 
@@ -9,5 +9,6 @@ Load only the focused document needed for the task:
 - Rentals, deployment, and releases: `agent_docs/operations_and_releases.md`
 - Public repository preparation: `docs/PUBLIC_RELEASE.md`
 
-Always preserve untracked results and the live SQLite database. Paid Vast rentals,
-repository visibility changes, and Git history rewrites require explicit user approval.
+Preserve untracked results and the live SQLite database. Get explicit user approval
+before starting a paid Vast rental, changing repository visibility, or rewriting Git
+history.

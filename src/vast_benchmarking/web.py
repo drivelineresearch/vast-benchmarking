@@ -102,8 +102,8 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
 
 def create_app(db_path: str) -> Flask:
     app = Flask(__name__)
-    # The production backend is loopback-only, so forwarded host, scheme, and
-    # path-prefix headers can only come from the local reverse proxy.
+    # Production Gunicorn listens on loopback. Only the local reverse proxy can reach
+    # it, which is why these forwarded headers are trusted.
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.config["BENCHMARK_DB"] = str(Path(db_path).resolve())
 

@@ -1,4 +1,4 @@
-# ☁️ Running on Vast.ai
+# Running on Vast.ai
 
 The controller rents an exact Vast.ai offer, waits for CUDA-capable SSH, uploads the
 project, runs the bounded benchmark, downloads the result, records it in SQLite, and
@@ -8,7 +8,7 @@ destroys only the instance it created.
 > These commands can spend real money. Set an explicit budget that has been authorized
 > for the campaign. The runner's budget is a safety ceiling, not spending permission.
 
-## 🔑 Controller setup
+## Controller setup
 
 Install the package and create an SSH key dedicated to disposable benchmark hosts:
 
@@ -25,10 +25,10 @@ VAST_API_KEY=
 ```
 
 Restrict that file to the account that runs the controller. The API key and private SSH
-key are never uploaded to a rental; only the public key is attached. Add the real value
-after the equals sign only in the protected controller file.
+key never leave the controller. Only the public key is attached to a rental. Put the real
+API key after the equals sign in the protected controller file.
 
-## 🎯 Benchmark one offer
+## Benchmark one offer
 
 Resolve an offer ID immediately before running it, then use a descriptive category and
 label:
@@ -47,7 +47,7 @@ The offer ID identifies a rentable listing. The machine ID identifies the underl
 host and is stored separately in the result. Do not substitute one identifier for the
 other.
 
-## 🚀 Run a bounded parallel campaign
+## Run a bounded parallel campaign
 
 A manifest contains only offer IDs, categories, and public labels. Start from one of the
 sanitized examples in `manifests/`:
@@ -61,11 +61,11 @@ uv run vast-benchmark-batch \
   --profile standard
 ```
 
-Before each launch, the runner checks current rentability, hourly price, CUDA ceiling,
-the rental ledger, and projected maximum cost. Parallel workers are staggered to reduce
-provider API throttling.
+Before each launch, the runner checks that the offer is still rentable and within the
+hourly price and CUDA limits. It also checks the rental ledger against the projected
+maximum cost. Parallel workers stagger their API calls to avoid provider throttling.
 
-## 🛡️ Safety sequence
+## Safety sequence
 
 1. Refuse unapproved or over-budget work before creating an instance.
 2. Re-resolve the offer and verify its current hourly rate.
@@ -78,7 +78,7 @@ By default, the single-offer runner refuses to create a rental while another Vas
 instance exists. `--allow-existing-instances` exists for controlled batch orchestration;
 do not use it casually.
 
-## 🧹 Revalidate and compile
+## Revalidate and compile
 
 Re-ingest downloaded JSON after an acceptance-rule change:
 
@@ -102,9 +102,9 @@ uv run python scripts/compile_campaign.py \
 Raw result JSON, SQLite databases, provider logs, and credentials belong under ignored
 local paths. Publish only reviewed, sanitized summaries.
 
-## 🧱 Image assumptions
+## Image assumptions
 
-The default runner image is pinned in the source and expects CUDA-capable PyTorch, a
-working Python environment, `nvidia-smi`, SSH, and enough disk for the benchmark. A host
-whose CUDA ceiling is lower than the image requirement is incompatible, not a failed
-performance result.
+The default image is pinned in the source. It needs CUDA-capable PyTorch, a working
+Python environment, `nvidia-smi`, SSH, and enough disk for the benchmark. If a host's
+CUDA ceiling is below the image requirement, record it as incompatible rather than as a
+failed performance result.

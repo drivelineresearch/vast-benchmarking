@@ -10,14 +10,14 @@ Read this before touching Vast rentals, a deployed dashboard service, or release
   then verify it is absent.
 - Attach only the public SSH key. Provider credentials stay on the controller.
 - Keep provisioning failures and partial benchmark attempts as annotations or excluded
-  records; do not turn them into performance claims.
+  records. Do not turn them into performance claims.
 
 ## Dashboard deployment
 
 - Keep production hostnames, account names, ports, and filesystem details out of tracked
   documentation. Use `docs/self-hosting.md` for the portable deployment contract.
-- Inspect the target host's actual service and proxy configuration before deploying; do
-  not replace it blindly with a tracked example.
+- Inspect the target host's service and proxy configuration before deploying. Do not
+  replace it blindly with a tracked example.
 - A dashboard-only deployment must preserve the durable SQLite database and must not
   operate on Vast workers or rentals.
 - Verify loopback and external `/healthz`, representative HTML, and required static
@@ -30,5 +30,6 @@ Read this before touching Vast rentals, a deployed dashboard service, or release
 - Update `CHANGELOG.md`, run the full root verification gate, and build with `uv build`.
 - Inspect wheel and source archive contents before tagging.
 - Use an annotated `v<version>` tag and attach both distributions to the GitHub release.
-- Publishing to a package registry, changing repository visibility, choosing a license,
-  or rewriting history requires separate owner approval.
+- Publishing to a package registry or rewriting history requires separate owner
+  approval. Repository visibility and license changes also need owner approval unless
+  the current task explicitly includes them.

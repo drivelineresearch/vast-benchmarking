@@ -8,17 +8,17 @@ dashboard metrics.
 - The standard profile must finish within its 540-second wall-clock budget in a normal
   CUDA-enabled Docker container.
 - A run must not download a model. GPU CV uses a small synthetic convolution workload.
-- The JSON artifact remains portable and self-describing. Schema changes need compatible
+- Keep the JSON artifact portable and self-describing. A schema change needs compatible
   ingestion behavior or an explicit migration plan.
 
 ## Capacity and acceptance
 
-- `cpu.effective_cores` is the lower of the process affinity and cgroup CPU quota. Keep
-  the fractional value; worker selection may round up to exercise fractional capacity.
+- `cpu.effective_cores` is the lower of process affinity and cgroup CPU quota. Keep the
+  fractional value. Worker selection may round up to exercise fractional capacity.
 - GPU totals are accepted only when every visible CUDA device returns its concurrent
   worker result. Preserve partial records for diagnosis but exclude them from rankings.
-- Within each machine/category pair, only the newest complete run enters a leaderboard;
-  older complete runs remain visible as superseded history.
+- Within each machine/category pair, only the newest complete run enters a leaderboard.
+  Older complete runs remain visible as superseded history.
 
 ## Comparison semantics
 
