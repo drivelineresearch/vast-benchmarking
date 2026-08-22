@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<section class="hero hero-compact">
+  <img class="hero-art" src="{{ url_for('static', filename='vast-benchmarking-header-v2.png') }}" alt="" aria-hidden="true">
+  <div class="hero-content">
+    <p class="eyebrow">HARDWARE INTELLIGENCE</p>
+    <h1>Which machine <span>actually performs?</span></h1>
+    <p class="hero-copy">
+      Reproducible GPU, effective CPU, memory, and disk stress tests in under ten minutes.
+    </p>
+    <div class="hero-meta">
+      <span><small>Latest snapshot</small><strong>{{ runs[0].finished_at[:19].replace('T', ' ') if runs else 'No runs yet' }}</strong></span>
+      <span><small>Benchmark status</small><strong>{{ summary.complete_count }} accepted / {{ summary.run_count }} stored</strong></span>
+    </div>
+  </div>
+</section>
+
+<section class="kpi-grid" aria-label="Benchmark summary">
+  <article class="kpi"><span>Runs</span><strong>{{ summary.run_count }}</strong><small>stored results</small></article>
+  <article class="kpi"><span>Machines</span><strong>{{ summary.machine_count }}</strong><small>Vast hosts</small></article>
+  <article class="kpi"><span>GPUs tested</span><strong>{{ summary.gpu_count }}</strong><small>concurrent devices</small></article>
+  <article class="kpi accent"><span>Estimated spend</span><strong>${{ '%.2f'|format(rentals.estimated_cost or 0) }}</strong><small>$10.00 campaign cap</small></article>
+</section>
+
+<section class="leaderboard-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">MACHINE-BY-MACHINE COMPARISON</p>
+      <h2>Category rankings</h2>
+    </div>
+    <p>Choose a workload to compare measured performance, historical rental price, and the exact Vast machine behind every result.</p>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Leaderboard category">
+      {% for key, board in leaderboards.items() %}
+      <button class="tab{% if loop.first %} active{% endif %}" id="tab-{{ key }}" data-tab="{{ key }}" type="button" role="tab" aria-controls="panel-{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ board.title }}</button>
+      {% endfor %}
+  </div>
+
+  {% for key, board in leaderboards.items() %}
+  <section class="category-board{% if loop.first %} active{% endif %}" id="panel-{{ key }}" data-panel="{{ key }}" data-display-limit="{{ board.display_limit }}" role="tabpanel" aria-labelledby="tab-{{ key }}"{% if not loop.first %} hidden{% endif %}>
+    {% if board.rows %}
+    <div class="category-title">
+      <div>
+        <p class="eyebrow">{{ board.metric }}</p>
+        <h2>{{ board.title }}</h2>
+      </div>
+      <p>Showing the top {{ board.display_limit }} of {{ board.candidate_count }} accepted machines. Bars are percent of the category leader; prices are historical rates captured at benchmark time.</p>
+    </div>
+
+    <figure class="chart-card">
+      <figcaption>
+        <span class="chart-caption-copy">
+          <strong>Measured performance</strong>
+          <span>{{ board.title }} · {{ board.rows[0].unit }} · zero baseline</span>
+        </span>
+        <span class="sort-controls" aria-label="Sort {{ board.title }} rankings">
+          <button class="sort-button active" type="button" data-sort-key="performance" aria-pressed="true">Max performance</button>
+          <button class="sort-button" type="button" data-sort-key="value" aria-pressed="false">Best perf / $</button>
+        </span>
+      </figcaption>
+      <div class="bar-chart" aria-label="{{ board.title }} performance by Vast machine ID">
+        {% for row in board.rows %}
+        <div class="chart-row" data-performance="{{ row.value }}" data-value="{{ row.value_per_dollar or -1 }}"{% if loop.index > board.display_limit %} hidden{% endif %} aria-label="Machine {{ row.machine_id }}: {{ '%.2f'|format(row.value) }} {{ row.unit }}, {{ '%.1f'|format(row.performance_percent) }} percent of best, ${{ '%.3f'|format(row.hourly_rate or 0) }} per hour">
+          <span class="chart-label"><strong><i data-rank-target>{{ loop.index }}</i> · #{{ row.machine_id }}</strong><small>{{ row.label }}</small></span>
+          <span class="chart-track"><i class="performance-fill" style="width: {{ '%.1f'|format(row.performance_percent) }}%"></i></span>
+          <span class="chart-metrics">
+            <strong>{{ '%.2f'|format(row.value) }} <small>{{ row.unit }}</small></strong>
+            <b>{{ '%.1f'|format(row.performance_percent) }}% of best</b>
+            <b class="price">${{ '%.3f'|format(row.hourly_rate or 0) }}/hr</b>
+            <b title="Measured performance divided by hourly rental rate">{{ row.value_per_dollar_display }} perf/$</b>
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+    </figure>
+
+    <div class="machine-detail-list">
+      {% for row in board.rows %}
+      <a class="machine-detail-card" href="{{ url_for('run_detail', run_id=row.run_id) }}" data-performance="{{ row.value }}" data-value="{{ row.value_per_dollar or -1 }}"{% if loop.index > board.display_limit %} hidden{% endif %}>
+        <span class="rank" data-rank-target>{{ loop.index }}</span>
+        <span class="machine-identity">
+          <small>VAST MACHINE ID</small>
+          <strong>#{{ row.machine_id }}</strong>
+          <b>{{ row.label }}</b>
+          <em>Offer #{{ row.offer_id }} · Instance #{{ row.instance_id }} · Run {{ row.run_short_id }}</em>
+        </span>
+        <span class="machine-result">
+          <small>{{ board.title }}</small>
+          <strong>{{ '%.2f'|format(row.value) }} <em>{{ row.unit }}</em></strong>
+          <span class="result-meta">
+            <b>{{ '%.1f'|format(row.performance_percent) }}% of best</b>
+            <b class="price">${{ '%.3f'|format(row.hourly_rate or 0) }}/hr</b>
+            <b>{{ row.value_per_dollar_display }} perf/$</b>
+          </span>
+        </span>
+        <span class="machine-spec-grid">
+          <span class="machine-spec"><small>GPU</small><strong>{{ row.gpu_summary }}</strong><em>{% if row.gpu_count %}{{ '%.1f'|format(row.gpu_vram_gib) }} GiB each{% else %}No CUDA GPU{% endif %}</em></span>
+          <span class="machine-spec"><small>CPU</small><strong>{{ row.cpu_model }}</strong><em>{{ row.cpu_effective }} effective cores</em></span>
+          <span class="machine-spec"><small>HOST</small><strong>{{ '%.0f'|format(row.memory_gib) }} GiB RAM</strong><em>{{ row.location }} · CUDA {{ row.cuda_version }}</em></span>
+          <span class="machine-spec"><small>PROVIDER</small><strong>{{ row.verification }}</strong><em>{% if row.reliability_pct is not none %}{{ '%.2f'|format(row.reliability_pct) }}% reliability{% else %}Reliability unavailable{% endif %}</em></span>
+          <span class="machine-spec"><small>RUN</small><strong>{{ '%.1f'|format(row.duration_seconds) }} seconds</strong><em>{% if row.annotation and row.annotation.rating %}{{ row.annotation.rating }} · {% endif %}Open complete metrics →</em></span>
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="empty-state"><strong>No {{ board.title|lower }} data yet.</strong></div>
+    {% endif %}
+  </section>
+  {% endfor %}
+</section>
+
+<section class="panel run-history" id="run-history">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">COMPLETE RECORD</p>
+      <h2>All run history</h2>
+    </div>
+    <p>Every stored result remains inspectable. Accepted runs feed the leaderboards; partial and superseded runs stay visible for auditability.</p>
+  </div>
+  {% if all_runs %}
+  <div class="history-list">
+    {% for run in all_runs %}
+    <a class="history-row" href="{{ url_for('run_detail', run_id=run.run_id) }}">
+      <span class="history-state {{ run.leaderboard_state }}">{{ run.leaderboard_state }}</span>
+      <span class="machine">
+        <strong>{% if run.machine_id %}Machine #{{ run.machine_id }} · {% endif %}{{ run.label }}</strong>
+        <small>{% if run.offer_id %}Offer #{{ run.offer_id }} · {% endif %}{% if run.instance_id %}Instance #{{ run.instance_id }} · {% endif %}{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
+      </span>
+      <span class="history-finished">{{ run.finished_at[:19].replace('T', ' ') }} UTC</span>
+      <span class="history-duration">
+        {% if run.annotation and run.annotation.rating %}{{ run.annotation.rating }} · {% endif %}{{ '%.1f'|format(run.duration_seconds) }}s
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><strong>No stored runs yet.</strong></div>
+  {% endif %}
+</section>
+
+<section class="panel machine-intelligence" id="machine-intelligence">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">LOCAL MACHINE INTELLIGENCE</p>
+      <h2>Ratings and known issues</h2>
+    </div>
+    <p>Durable local notes keyed by Vast machine ID. Vast's visible rental labels are temporary instance labels; failed attempts never affect performance leaderboards.</p>
+  </div>
+  {% if machine_annotations %}
+  <div class="annotation-list">
+    {% for annotation in machine_annotations %}
+    <article class="annotation-row">
+      <span class="annotation-disposition {{ annotation.disposition }}">{{ annotation.disposition }}</span>
+      <span class="machine">
+        <strong>Machine {{ annotation.machine_id }}{% if annotation.rating %} · {{ annotation.rating }}{% endif %}</strong>
+        <small>{{ annotation.category or 'cross-category' }}{% if annotation.tags %} · {{ annotation.tags|join(' · ') }}{% endif %}</small>
+      </span>
+      <p>{{ annotation.notes }}</p>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><strong>No machine annotations yet.</strong></div>
+  {% endif %}
+</section>
+
+<section class="panel methodology">
+  <div>
+    <p class="eyebrow">METHOD</p>
+    <h2>Designed for a ten-minute ceiling</h2>
+  </div>
+  <div class="method-grid">
+    <article><strong>GPU intensity</strong><p>Concurrent FP16 GEMM at three matrix sizes plus a CV convolution stack on every visible GPU.</p></article>
+    <article><strong>CPU reality</strong><p>Uses the lower of container CPU affinity and cgroup quota as effective cores, then measures single-thread and all-core SHA-256 plus Torch matmul.</p></article>
+    <article><strong>I/O truth</strong><p>RAM copy/fill/scale and fsync-backed sequential disk writes with cache-drop advice before reads.</p></article>
+  </div>
+</section>
+{% endblock %}

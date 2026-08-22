@@ -1,0 +1,19 @@
+{
+  "runs": [
+    {
+      "offer_id": 48276693,
+      "category": "gpu-heavy",
+      "label": "8x RTX 4060 8GB / EPYC 7502"
+    },
+    {
+      "offer_id": 48300179,
+      "category": "gpu-heavy",
+      "label": "8x RTX 3060 12GB / Xeon E5-2682 v4"
+    },
+    {
+      "offer_id": 47856796,
+      "category": "high-effective-cpu",
+      "label": "128 listed effective cores / EPYC 7532 / 8x RTX 4070 Super"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "runs": [
+    {
+      "offer_id": 46837215,
+      "category": "gpu-heavy",
+      "label": "8x RTX 3070 8GB / EPYC 7551"
+    },
+    {
+      "offer_id": 48044480,
+      "category": "gpu-heavy",
+      "label": "8x RTX 2080 Ti 11GB / Xeon Gold 6252 A"
+    },
+    {
+      "offer_id": 47023970,
+      "category": "gpu-heavy",
+      "label": "8x RTX 4070 12GB / Xeon E5-2673 v4 A"
+    },
+    {
+      "offer_id": 46765029,
+      "category": "gpu-heavy",
+      "label": "8x RTX 4070 12GB / Xeon E5-2673 v4 B"
+    },
+    {
+      "offer_id": 48361149,
+      "category": "high-effective-cpu",
+      "label": "192 listed effective cores / EPYC 9654 / RTX 5080"
+    },
+    {
+      "offer_id": 47914135,
+      "category": "high-effective-cpu",
+      "label": "128 listed effective cores / Threadripper Pro 5995WX"
+    },
+    {
+      "offer_id": 45876510,
+      "category": "fast-single-cpu",
+      "label": "Core Ultra 9 285K / 2x RTX PRO 4000"
+    },
+    {
+      "offer_id": 33051665,
+      "category": "fast-single-cpu",
+      "label": "Core i9-14900K / RTX 5060"
+    }
+  ]
+}
