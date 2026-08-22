@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from flask import Flask, abort, jsonify, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .scoring import LEADERBOARD_METRICS, metric_leaderboard, relative_scores
 from .storage import get_run, list_runs, rental_summary
@@ -15,14 +16,17 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
     seen: set[tuple[Any, Any]] = set()
     for run in all_runs:
         if run.get("status") != "complete":
+            run["leaderboard_state"] = "partial"
             continue
         key = (
             run.get("machine_id") or run.get("run_id"),
             run.get("vast", {}).get("category"),
         )
         if key in seen:
+            run["leaderboard_state"] = "superseded"
             continue
         seen.add(key)
+        run["leaderboard_state"] = "accepted"
         runs.append(run)
     scored = relative_scores(runs)
     leaderboards = {
@@ -39,6 +43,7 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
     )
     return {
         "runs": scored,
+        "all_runs": all_runs,
         "leaderboards": leaderboards,
         "summary": {
             "run_count": len(all_runs),
@@ -53,6 +58,9 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
 
 def create_app(db_path: str) -> Flask:
     app = Flask(__name__)
+    # The production backend is loopback-only, so forwarded host, scheme, and
+    # path-prefix headers can only come from the local reverse proxy.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.config["BENCHMARK_DB"] = str(Path(db_path).resolve())
 
     @app.get("/")
@@ -75,6 +83,6 @@ def create_app(db_path: str) -> Flask:
 
     @app.get("/healthz")
     def healthz() -> Any:
-        return jsonify({"ok": True, "database": app.config["BENCHMARK_DB"]})
+        return jsonify({"ok": True})
 
     return app

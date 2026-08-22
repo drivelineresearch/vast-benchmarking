@@ -72,6 +72,17 @@ uv run vast-benchmark serve \
 Open <http://127.0.0.1:8080>. The health endpoint is `/healthz`, and normalized dashboard
 data is available from `/api/runs`.
 
+The dashboard includes an accepted-results leaderboard and an all-run history. The latter
+keeps partial and superseded runs visible without allowing them to affect rankings.
+
+## Production service
+
+The `deploy/` directory contains the Gunicorn systemd unit used on `dc-boddydev` and the
+Apache route fragments for `/vast-benchmark/`. The backend listens only on
+`127.0.0.1:18100`; Apache supplies the external scheme, host, and path prefix.
+
+Live dashboard: <https://dc-boddydev.drivelinebaseball.com/vast-benchmark/>
+
 ## Run in Docker
 
 The image starts from the official PyTorch CUDA 12.8 runtime. The benchmark does not

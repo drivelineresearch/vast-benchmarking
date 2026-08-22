@@ -87,6 +87,33 @@
   {% endfor %}
 </section>
 
+<section class="panel run-history" id="run-history">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">COMPLETE RECORD</p>
+      <h2>All run history</h2>
+    </div>
+    <p>Every stored result remains inspectable. Accepted runs feed the leaderboards; partial and superseded runs stay visible for auditability.</p>
+  </div>
+  {% if all_runs %}
+  <div class="history-list">
+    {% for run in all_runs %}
+    <a class="history-row" href="{{ url_for('run_detail', run_id=run.run_id) }}">
+      <span class="history-state {{ run.leaderboard_state }}">{{ run.leaderboard_state }}</span>
+      <span class="machine">
+        <strong>{{ run.label }}</strong>
+        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
+      </span>
+      <span class="history-finished">{{ run.finished_at[:19].replace('T', ' ') }} UTC</span>
+      <span class="history-duration">{{ '%.1f'|format(run.duration_seconds) }}s</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><strong>No stored runs yet.</strong></div>
+  {% endif %}
+</section>
+
 <section class="panel methodology">
   <div>
     <p class="eyebrow">METHOD</p>

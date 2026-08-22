@@ -66,6 +66,15 @@ h2 { font-size: clamp(28px, 3vw, 46px); letter-spacing: -.04em; margin-bottom: 0
 .metric-value { text-align: right; color: var(--muted); }
 .metric-value strong { color: white; font-size: 21px; }
 
+.history-list { border-top: 1px solid var(--line); }
+.history-row { display: grid; grid-template-columns: 110px minmax(260px, 1fr) 190px 70px; gap: 18px; align-items: center; min-height: 76px; border-bottom: 1px solid var(--line); transition: background .15s ease; }
+.history-row:hover { background: var(--panel-soft); }
+.history-state { width: fit-content; border: 1px solid var(--line); padding: 6px 9px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.history-state.accepted { border-color: #277b4a; color: var(--green); }
+.history-state.partial { border-color: #79343a; color: #efadb3; }
+.history-finished, .history-duration { color: var(--muted); font-size: 12px; }
+.history-duration { text-align: right; }
+
 .methodology { display: grid; grid-template-columns: 300px 1fr; gap: 70px; }
 .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
 .method-grid article { border-top: 2px solid var(--red); padding-top: 18px; }
@@ -103,6 +112,8 @@ footer { min-height: 90px; border-top: 1px solid var(--line); color: var(--muted
   .section-heading { align-items: start; flex-direction: column; }
   .tabs { justify-content: flex-start; }
   .ranking-row, .category-row { grid-template-columns: 32px 1fr auto; padding: 14px 0; }
+  .history-row { grid-template-columns: 100px 1fr auto; padding: 14px 0; }
+  .history-finished { display: none; }
   .score-bar, .category-bar { display: none; }
 }
 
@@ -114,5 +125,9 @@ footer { min-height: 90px; border-top: 1px solid var(--line); color: var(--muted
   .metric-value { font-size: 11px; }
   .metric-value strong { font-size: 16px; }
   .raw-meta dl { grid-template-columns: 1fr; }
+  .history-row { grid-template-columns: 1fr auto; }
+  .history-row .machine { grid-column: 1 / -1; grid-row: 1; }
+  .history-state { grid-column: 1; grid-row: 2; }
+  .history-duration { grid-column: 2; grid-row: 2; }
   footer { align-items: start; flex-direction: column; }
 }
