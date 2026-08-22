@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="208" height="28" role="img" aria-label="effective CPU: 244.8 cores">
+  <title>effective CPU: 244.8 cores</title>
+  <mask id="r"><rect width="208" height="28" rx="5" fill="#fff"/></mask>
+  <g mask="url(#r)"><rect width="104" height="28" fill="#141416"/><rect x="104" width="104" height="28" fill="#e41f2b"/></g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,sans-serif" font-size="11" font-weight="700">
+    <text x="52" y="18">EFFECTIVE CPU</text><text x="156" y="18">244.8 CORES</text>
+  </g>
+</svg>

@@ -1,4 +1,18 @@
-# Vast Benchmarking
+<p align="center">
+  <img src="assets/vast-benchmarking-banner.png" alt="Vast Benchmarking hardware throughput banner" width="100%">
+</p>
+
+<h1 align="center">Vast Benchmarking</h1>
+
+<p align="center">
+  <a href="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml"><img src="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="assets/badges/tests.svg" alt="7 tests passing">
+  <img src="assets/badges/runtime.svg" alt="197 second maximum measured runtime">
+  <img src="assets/badges/gpu-cv.svg" alt="118,421 CV images per second">
+  <img src="assets/badges/effective-cpu.svg" alt="244.8 effective CPU cores">
+  <img src="assets/badges/vast-cost.svg" alt="0.48 dollars Vast cost">
+  <img src="assets/badges/python.svg" alt="Python 3.10 or newer">
+</p>
 
 A bounded Python benchmark for comparing Vast.ai Docker offers on the workloads that
 matter to Driveline Research: concurrent computer-vision GPU throughput, effective CPU
@@ -6,6 +20,22 @@ concurrency, single-thread CPU speed, host memory bandwidth, and disk throughput
 
 The standard profile has a hard 540-second wall-clock budget. It stores raw results in
 SQLite and serves a Driveline-styled leaderboard from the same database.
+
+## Accepted benchmark snapshot
+
+The initial 2026-08-21 campaign produced three accepted runs. Effective CPU is measured
+from the live container's cgroup quota and affinity, so it can be lower than the Vast
+listing.
+
+| Category | Accepted machine | Actual capacity | Headline result | Runtime |
+| --- | --- | ---: | ---: | ---: |
+| GPU-heavy | 8× RTX 4070 Super 12 GB | 76.8 effective CPU cores | 598.5 TFLOP/s; 118,421 CV images/s; 99.1% GEMM scaling | 171 s |
+| Effective CPU | EPYC 7702 + 8× RTX 3060 | **244.8 effective cores** (256 listed) | 216.98 GB/s multicore SHA-256; 1,557 GFLOP/s matmul | 197 s |
+| Fast single CPU | Ryzen 7 9800X3D + RTX 5070 Ti | 3.84 effective cores (4 listed) | **2.559 GB/s single-thread SHA-256**; 141.27 GFLOP/s matmul | 121 s |
+
+The campaign moved **$0.478** of Vast account credit, including failed provider/SSH
+iterations. A conservative elapsed-time ledger estimated **$0.588**, safely below the
+enforced **$5.00** cap. All rented instances were destroyed and verified absent.
 
 ## What it measures
 
