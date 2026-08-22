@@ -1,4 +1,13 @@
-from vast_benchmarking.vast_runner import _ssh_endpoints
+import pytest
+
+from vast_benchmarking.vast_runner import _bounded_timeout, _ssh_endpoints
+
+
+def test_bounded_timeout_respects_instance_deadline(monkeypatch) -> None:
+    monkeypatch.setattr("vast_benchmarking.vast_runner.time.monotonic", lambda: 100.0)
+    assert _bounded_timeout(130.0, 90) == 30
+    with pytest.raises(RuntimeError, match="maximum rental duration"):
+        _bounded_timeout(100.0, 90)
 
 
 def test_ssh_endpoints_prefers_direct_and_keeps_proxy_fallback():

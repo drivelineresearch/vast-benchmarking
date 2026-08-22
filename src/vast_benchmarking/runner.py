@@ -19,6 +19,7 @@ from .benchmarks import (
 from .models import BenchmarkResult, Metric
 from .storage import save_result
 from .system_info import collect_system_info
+from .validation import benchmark_status
 
 
 def _utc_now() -> str:
@@ -99,13 +100,14 @@ def run_benchmark(
         errors.extend(phase_errors)
 
     elapsed = time.monotonic() - started
-    categories = {metric.category for metric in metrics}
-    required = {"cpu", "memory", "disk"}
-    if system.get("torch_cuda_available") or system.get("gpus"):
-        required.add("gpu")
-    status = (
-        "complete" if required.issubset(categories) and elapsed <= config.max_seconds else "partial"
+    status, validation_errors = benchmark_status(
+        system=system,
+        metrics=metrics,
+        gpu_results=gpu_results,
+        elapsed_seconds=elapsed,
+        max_seconds=config.max_seconds,
     )
+    errors.extend(error for error in validation_errors if error not in errors)
     result = BenchmarkResult(
         run_id=str(uuid.uuid4()),
         started_at=started_wall,

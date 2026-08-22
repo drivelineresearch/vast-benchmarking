@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .runner import run_benchmark
-from .storage import ingest_json, init_db
+from .storage import ingest_json, init_db, save_machine_annotations
 
 
 def _json_object(raw: str) -> dict[str, Any]:
@@ -35,6 +35,12 @@ def build_parser() -> argparse.ArgumentParser:
     ingest_parser = subparsers.add_parser("ingest", help="Ingest a benchmark JSON result")
     ingest_parser.add_argument("result")
     ingest_parser.add_argument("--db", required=True)
+
+    annotate_parser = subparsers.add_parser(
+        "annotate", help="Upsert machine ratings and operational notes"
+    )
+    annotate_parser.add_argument("annotations")
+    annotate_parser.add_argument("--db", required=True)
 
     serve_parser = subparsers.add_parser("serve", help="Serve the leaderboard dashboard")
     serve_parser.add_argument("--db", required=True)
@@ -65,6 +71,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "ingest":
         result = ingest_json(args.db, args.result)
         print(json.dumps({"run_id": result.run_id, "status": result.status}))
+        return 0
+    if args.command == "annotate":
+        payload = json.loads(Path(args.annotations).read_text())
+        annotations = payload.get("machines") if isinstance(payload, dict) else payload
+        if not isinstance(annotations, list):
+            raise ValueError("annotation file must contain a machines list")
+        save_machine_annotations(args.db, annotations)
+        print(json.dumps({"annotations_saved": len(annotations)}))
         return 0
     if args.command == "serve":
         from .web import create_app

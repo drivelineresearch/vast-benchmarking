@@ -1,0 +1,431 @@
+{
+  "machines": [
+    {
+      "machine_id": 14364,
+      "category": "gpu-heavy",
+      "disposition": "incompatible",
+      "rating": null,
+      "notes": "Host CUDA ceiling was 12.8; the CUDA 12.9 benchmark image produced PyTorch error 804. Rental was stopped without rating the hardware.",
+      "tags": [
+        "cuda-12.8",
+        "image-requires-12.9"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 25247,
+      "category": "high-effective-cpu",
+      "disposition": "benchmarked",
+      "rating": "B (70%)",
+      "notes": "Measured 301.460 GB/s on cpu.sha256_multi_gbps; 368.64001 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 5060 Ti; $0.830/hr.",
+      "tags": [
+        "high-effective-cpu",
+        "B-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 28477,
+      "category": "gpu-heavy",
+      "disposition": "benchmarked",
+      "rating": "D (44%)",
+      "notes": "Measured 51321.488 images/s on gpu.concurrent.cv_images_per_sec_total; 61.43999 effective CPU cores; 8\u00d7 NVIDIA GeForce RTX 3060; $0.432/hr.",
+      "tags": [
+        "gpu-heavy",
+        "D-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 31412,
+      "category": "gpu-heavy",
+      "disposition": "partial",
+      "rating": null,
+      "notes": "Only 3/8 visible GPUs returned concurrent benchmark data; aggregate GPU totals are excluded from leaderboards.",
+      "tags": [
+        "gpu-heavy",
+        "benchmark-partial",
+        "incomplete-result"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 34698,
+      "category": "high-effective-cpu",
+      "disposition": "benchmarked",
+      "rating": "D (36%)",
+      "notes": "Measured 154.915 GB/s on cpu.sha256_multi_gbps; 122.87999 effective CPU cores; 4\u00d7 Tesla V100-SXM2-32GB; $0.749/hr.",
+      "tags": [
+        "high-effective-cpu",
+        "D-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 35039,
+      "category": "fast-single-cpu",
+      "disposition": "benchmarked",
+      "rating": "C (52%)",
+      "notes": "Measured 2.775 GB/s on cpu.sha256_single_gbps; 30.71999 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 4080; $0.271/hr.",
+      "tags": [
+        "fast-single-cpu",
+        "C-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 37271,
+      "category": "gpu-heavy",
+      "disposition": "incompatible",
+      "rating": null,
+      "notes": "Host CUDA ceiling was 12.8, below the benchmark image runtime requirement; rental was stopped before benchmarking.",
+      "tags": [
+        "cuda-12.8",
+        "image-requires-12.9"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 42085,
+      "category": "high-effective-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine reached running state during the 2026-08-22 attempt but never exposed usable SSH within 480 seconds.",
+      "tags": [
+        "ssh-unavailable"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 49927,
+      "category": "gpu-heavy",
+      "disposition": "inconclusive",
+      "rating": null,
+      "notes": "Vast API throttled orchestration during the 2026-08-22 campaign; the machine itself was not evaluated.",
+      "tags": [
+        "api-rate-limit"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 52572,
+      "category": "gpu-heavy",
+      "disposition": "inconclusive",
+      "rating": null,
+      "notes": "Vast API throttled orchestration during the 2026-08-22 campaign; the machine itself was not evaluated.",
+      "tags": [
+        "api-rate-limit"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 55801,
+      "category": "fast-single-cpu",
+      "disposition": "benchmarked",
+      "rating": "C (54%)",
+      "notes": "Measured 2.885 GB/s on cpu.sha256_single_gbps; 30.72 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 5060; $0.141/hr.",
+      "tags": [
+        "fast-single-cpu",
+        "C-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 58964,
+      "category": "fast-single-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine reached running state during the 2026-08-22 attempt but never exposed usable SSH within 480 seconds.",
+      "tags": [
+        "ssh-unavailable"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 59070,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 59149,
+      "category": "gpu-heavy",
+      "disposition": "benchmarked",
+      "rating": "B (66%)",
+      "notes": "Measured 77161.670 images/s on gpu.concurrent.cv_images_per_sec_total; 122.87999 effective CPU cores; 8\u00d7 NVIDIA GeForce RTX 5060 Ti; $0.862/hr.",
+      "tags": [
+        "gpu-heavy",
+        "B-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 62158,
+      "category": "high-effective-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine reached running state during the 2026-08-22 attempt but never exposed usable SSH within 480 seconds.",
+      "tags": [
+        "ssh-unavailable"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 68203,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 68507,
+      "category": "high-effective-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine reached running state during the 2026-08-22 attempt but never exposed usable SSH within 480 seconds.",
+      "tags": [
+        "ssh-unavailable"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 108455,
+      "category": "fast-single-cpu",
+      "disposition": "benchmarked",
+      "rating": "D (40%)",
+      "notes": "Measured 2.120 GB/s on cpu.sha256_single_gbps; 30.71999 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 3060; $0.154/hr.",
+      "tags": [
+        "fast-single-cpu",
+        "D-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 137275,
+      "category": "gpu-heavy",
+      "disposition": "recommended",
+      "rating": "S (100%)",
+      "notes": "Measured 116501.113 images/s on gpu.concurrent.cv_images_per_sec_total; 76.8 effective CPU cores; 8\u00d7 NVIDIA GeForce RTX 4070 SUPER; $0.698/hr.",
+      "tags": [
+        "gpu-heavy",
+        "S-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 137456,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 137785,
+      "category": "fast-single-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine reached running state during the 2026-08-22 attempt but never exposed usable SSH within 480 seconds.",
+      "tags": [
+        "ssh-unavailable"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 138008,
+      "category": "high-effective-cpu",
+      "disposition": "inconclusive",
+      "rating": null,
+      "notes": "Vast API throttled orchestration during the 2026-08-22 campaign; the machine itself was not evaluated.",
+      "tags": [
+        "api-rate-limit"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 139658,
+      "category": "high-effective-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine went offline during the 2026-08-22 provisioning attempt; no performance result was accepted.",
+      "tags": [
+        "offline"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 141094,
+      "category": "fast-single-cpu",
+      "disposition": "recommended",
+      "rating": "S (100%)",
+      "notes": "Measured 5.333 GB/s on cpu.sha256_single_gbps; 23.04 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 5080; $0.301/hr.",
+      "tags": [
+        "fast-single-cpu",
+        "S-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 141127,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 141176,
+      "category": "gpu-heavy",
+      "disposition": "partial",
+      "rating": null,
+      "notes": "Only 6/8 visible GPUs returned concurrent benchmark data; aggregate GPU totals are excluded from leaderboards.",
+      "tags": [
+        "gpu-heavy",
+        "benchmark-partial",
+        "incomplete-result"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 141626,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 143986,
+      "category": "gpu-heavy",
+      "disposition": "benchmarked",
+      "rating": "D (48%)",
+      "notes": "Measured 55817.190 images/s on gpu.concurrent.cv_images_per_sec_total; 61.43999 effective CPU cores; 8\u00d7 NVIDIA GeForce RTX 4060; $0.428/hr.",
+      "tags": [
+        "gpu-heavy",
+        "D-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 145482,
+      "category": "high-effective-cpu",
+      "disposition": "benchmarked",
+      "rating": "D (33%)",
+      "notes": "Measured 139.934 GB/s on cpu.sha256_multi_gbps; 122.87999 effective CPU cores; 1\u00d7 NVIDIA GeForce RTX 3060 Ti; $0.336/hr.",
+      "tags": [
+        "high-effective-cpu",
+        "D-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 145496,
+      "category": "high-effective-cpu",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 145504,
+      "category": "gpu-heavy",
+      "disposition": "inconclusive",
+      "rating": null,
+      "notes": "A redundant hedge rental was canceled while still provisioning after another machine completed the required 8/8-GPU result; this machine was not evaluated.",
+      "tags": [
+        "redundant-hedge",
+        "canceled-before-benchmark"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 146110,
+      "category": "high-effective-cpu",
+      "disposition": "recommended",
+      "rating": "S (100%)",
+      "notes": "Measured 427.820 GB/s on cpu.sha256_multi_gbps; 368.64001 effective CPU cores; 1\u00d7 NVIDIA RTX A2000; $0.939/hr.",
+      "tags": [
+        "high-effective-cpu",
+        "S-grade",
+        "benchmark-complete"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    },
+    {
+      "machine_id": 147067,
+      "category": "gpu-heavy",
+      "disposition": "known-bad",
+      "rating": null,
+      "notes": "Machine did not finish container provisioning within the 15-minute limit during the 2026-08-22 campaign.",
+      "tags": [
+        "provisioning-timeout"
+      ],
+      "source": "2026-08-22-parallel-expansion",
+      "updated_at": "2026-08-22T09:40:56.424850+00:00"
+    }
+  ]
+}

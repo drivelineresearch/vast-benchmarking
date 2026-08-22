@@ -22,7 +22,7 @@
   <article class="kpi"><span>Runs</span><strong>{{ summary.run_count }}</strong><small>stored results</small></article>
   <article class="kpi"><span>Machines</span><strong>{{ summary.machine_count }}</strong><small>Vast hosts</small></article>
   <article class="kpi"><span>GPUs tested</span><strong>{{ summary.gpu_count }}</strong><small>concurrent devices</small></article>
-  <article class="kpi accent"><span>Estimated spend</span><strong>${{ '%.2f'|format(rentals.estimated_cost or 0) }}</strong><small>$5.00 hard cap</small></article>
+  <article class="kpi accent"><span>Estimated spend</span><strong>${{ '%.2f'|format(rentals.estimated_cost or 0) }}</strong><small>$10.00 campaign cap</small></article>
 </section>
 
 <section class="panel composite-panel">
@@ -40,7 +40,7 @@
       <span class="rank">{{ loop.index }}</span>
       <span class="machine">
         <strong>{{ run.label }}</strong>
-        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
+        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores{% if run.system.gpus %} · {{ run.gpu_results|length }}/{{ run.system.gpus|length }} GPUs returned{% endif %}</small>
       </span>
       <span class="score-bar"><i style="width: {{ '%.1f'|format(run.relative_score) }}%"></i></span>
       <strong class="score">{{ '%.1f'|format(run.relative_score) }}</strong>
@@ -105,12 +105,40 @@
         <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
       </span>
       <span class="history-finished">{{ run.finished_at[:19].replace('T', ' ') }} UTC</span>
-      <span class="history-duration">{{ '%.1f'|format(run.duration_seconds) }}s</span>
+      <span class="history-duration">
+        {% if run.annotation and run.annotation.rating %}{{ run.annotation.rating }} · {% endif %}{{ '%.1f'|format(run.duration_seconds) }}s
+      </span>
     </a>
     {% endfor %}
   </div>
   {% else %}
   <div class="empty-state"><strong>No stored runs yet.</strong></div>
+  {% endif %}
+</section>
+
+<section class="panel machine-intelligence" id="machine-intelligence">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">LOCAL MACHINE INTELLIGENCE</p>
+      <h2>Ratings and known issues</h2>
+    </div>
+    <p>Durable local notes keyed by Vast machine ID. Vast's visible rental labels are temporary instance labels; failed attempts never affect performance leaderboards.</p>
+  </div>
+  {% if machine_annotations %}
+  <div class="annotation-list">
+    {% for annotation in machine_annotations %}
+    <article class="annotation-row">
+      <span class="annotation-disposition {{ annotation.disposition }}">{{ annotation.disposition }}</span>
+      <span class="machine">
+        <strong>Machine {{ annotation.machine_id }}{% if annotation.rating %} · {{ annotation.rating }}{% endif %}</strong>
+        <small>{{ annotation.category or 'cross-category' }}{% if annotation.tags %} · {{ annotation.tags|join(' · ') }}{% endif %}</small>
+      </span>
+      <p>{{ annotation.notes }}</p>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><strong>No machine annotations yet.</strong></div>
   {% endif %}
 </section>
 

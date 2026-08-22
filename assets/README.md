@@ -10,4 +10,4 @@ badges, or watermarks. SHA-256:
 `1713deae9bfb3874b9ca5bfd0df3af26d0b9102f8edb54884eb38e8730870134`.
 
 The SVG badges are deterministic repository assets generated from the accepted
-2026-08-21 benchmark snapshot documented in the root README.
+2026-08-22 benchmark snapshot documented in the root README.

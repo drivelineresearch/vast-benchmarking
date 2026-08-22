@@ -554,7 +554,7 @@ def run_gpu_benchmarks(
         config.gpu_kernel_seconds,
         config.gpu_cv_seconds,
         False,
-        timeout=max(90.0, config.gpu_kernel_seconds * 12 + config.gpu_cv_seconds * 4),
+        timeout=max(180.0, config.gpu_kernel_seconds * 18 + config.gpu_cv_seconds * 8),
     )
     monitor_values = monitor.stop()
 

@@ -74,6 +74,22 @@ h2 { font-size: clamp(28px, 3vw, 46px); letter-spacing: -.04em; margin-bottom: 0
 .history-state.partial { border-color: #79343a; color: #efadb3; }
 .history-finished, .history-duration { color: var(--muted); font-size: 12px; }
 .history-duration { text-align: right; }
+.annotation-list { border-top: 1px solid var(--line); }
+.annotation-row { display: grid; grid-template-columns: 130px minmax(240px, .8fr) minmax(320px, 1.4fr); gap: 18px; align-items: center; min-height: 86px; border-bottom: 1px solid var(--line); }
+.annotation-row p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0; }
+.annotation-disposition { width: fit-content; border: 1px solid var(--line); padding: 6px 9px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.annotation-disposition.recommended { color: var(--green); border-color: #277b4a; }
+.annotation-disposition.known-bad { color: #efadb3; border-color: #79343a; }
+.annotation-disposition.incompatible { color: #f0c36b; border-color: #705821; }
+.annotation-disposition.partial { color: #f0c36b; border-color: #705821; }
+.annotation-disposition.inconclusive { color: #9ec5fe; border-color: #315b86; }
+.machine-note { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: center; border: 1px solid var(--line); background: var(--panel); margin: 32px 0; padding: 24px; }
+.machine-note div span, .machine-note div strong { display: block; }
+.machine-note div span { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.machine-note div strong { font-size: 22px; margin-top: 6px; }
+.machine-note p { color: var(--muted); margin: 0; line-height: 1.5; }
+.machine-note.known-bad { border-color: #79343a; }
+.machine-note.partial, .machine-note.incompatible { border-color: #705821; }
 
 .methodology { display: grid; grid-template-columns: 300px 1fr; gap: 70px; }
 .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
@@ -114,6 +130,9 @@ footer { min-height: 90px; border-top: 1px solid var(--line); color: var(--muted
   .ranking-row, .category-row { grid-template-columns: 32px 1fr auto; padding: 14px 0; }
   .history-row { grid-template-columns: 100px 1fr auto; padding: 14px 0; }
   .history-finished { display: none; }
+  .annotation-row { grid-template-columns: 120px 1fr; padding: 16px 0; }
+  .annotation-row p { grid-column: 1 / -1; }
+  .machine-note { grid-template-columns: 1fr; }
   .score-bar, .category-bar { display: none; }
 }
 

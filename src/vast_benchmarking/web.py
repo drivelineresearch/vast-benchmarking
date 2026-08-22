@@ -7,11 +7,21 @@ from flask import Flask, abort, jsonify, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .scoring import LEADERBOARD_METRICS, metric_leaderboard, relative_scores
-from .storage import get_run, list_runs, rental_summary
+from .storage import (
+    get_machine_annotation,
+    get_run,
+    list_machine_annotations,
+    list_runs,
+    rental_summary,
+)
 
 
 def _dashboard_data(db_path: str) -> dict[str, Any]:
     all_runs = list_runs(db_path)
+    annotations = list_machine_annotations(db_path)
+    annotations_by_machine = {item["machine_id"]: item for item in annotations}
+    for run in all_runs:
+        run["annotation"] = annotations_by_machine.get(run.get("machine_id"))
     runs: list[dict[str, Any]] = []
     seen: set[tuple[Any, Any]] = set()
     for run in all_runs:
@@ -44,6 +54,7 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
     return {
         "runs": scored,
         "all_runs": all_runs,
+        "machine_annotations": annotations,
         "leaderboards": leaderboards,
         "summary": {
             "run_count": len(all_runs),
@@ -75,7 +86,14 @@ def create_app(db_path: str) -> Flask:
         categories: dict[str, list[dict[str, Any]]] = {}
         for metric in run["metrics"]:
             categories.setdefault(metric["category"], []).append(metric)
-        return render_template("run.html", run=run, categories=categories)
+        annotation = (
+            get_machine_annotation(app.config["BENCHMARK_DB"], run["machine_id"])
+            if run.get("machine_id")
+            else None
+        )
+        return render_template(
+            "run.html", run=run, categories=categories, annotation=annotation
+        )
 
     @app.get("/api/runs")
     def api_runs() -> Any:

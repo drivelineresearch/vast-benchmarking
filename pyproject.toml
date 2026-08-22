@@ -25,6 +25,7 @@ server = [
 [project.scripts]
 vast-benchmark = "vast_benchmarking.cli:main"
 vast-benchmark-runner = "vast_benchmarking.vast_runner:main"
+vast-benchmark-batch = "vast_benchmarking.batch_runner:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

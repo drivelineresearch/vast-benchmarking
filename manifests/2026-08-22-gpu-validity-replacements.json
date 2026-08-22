@@ -1,0 +1,14 @@
+{
+  "runs": [
+    {
+      "offer_id": 33767391,
+      "category": "gpu-heavy",
+      "label": "8x RTX 4060 Ti 16GB / EPYC 7K62"
+    },
+    {
+      "offer_id": 48356530,
+      "category": "gpu-heavy",
+      "label": "8x RTX 5060 Ti 16GB / EPYC 7742"
+    }
+  ]
+}

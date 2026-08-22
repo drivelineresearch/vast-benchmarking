@@ -28,6 +28,13 @@ def _credit(account: dict[str, Any]) -> float | None:
     return float(value) if value is not None else None
 
 
+def _bounded_timeout(deadline: float, requested_seconds: int) -> int:
+    remaining = int(deadline - time.monotonic())
+    if remaining <= 0:
+        raise RuntimeError("instance reached its maximum rental duration")
+    return max(1, min(requested_seconds, remaining))
+
+
 def _ssh_base(host: str, port: int, key: str, known_hosts: str) -> list[str]:
     return [
         "ssh",
@@ -80,7 +87,9 @@ def _wait_for_running(client: VastClient, instance_id: int, timeout_seconds: int
             return instance
         if last_status in {"exited", "offline", "destroyed"}:
             raise VastAPIError(f"instance {instance_id} entered terminal status {last_status}")
-        time.sleep(10)
+        # Parallel batches otherwise synchronize their API polls and can exceed
+        # Vast's per-client request threshold.
+        time.sleep(12 + instance_id % 6)
     raise VastAPIError(
         f"instance {instance_id} did not become SSH-ready, last status {last_status}"
     )
@@ -226,7 +235,7 @@ def run_offer(args: argparse.Namespace) -> int:
         raise RuntimeError(f"SSH public key does not exist: {public_key_path}")
 
     active_instances = client.instances()
-    if active_instances:
+    if active_instances and not args.allow_existing_instances:
         ids = [instance.get("id") for instance in active_instances]
         raise RuntimeError(f"refusing to create another instance while these exist: {ids}")
 
@@ -237,6 +246,11 @@ def run_offer(args: argparse.Namespace) -> int:
     if hourly_rate <= 0 or hourly_rate > args.max_hourly:
         raise RuntimeError(
             f"offer rate ${hourly_rate:.4f}/hr violates max hourly ${args.max_hourly:.4f}/hr"
+        )
+    cuda_max = float(offer.get("cuda_max_good") or 0)
+    if cuda_max < args.min_cuda:
+        raise RuntimeError(
+            f"offer CUDA ceiling {cuda_max:.1f} is below required runtime {args.min_cuda:.1f}"
         )
     spent = float(rental_summary(db_path).get("estimated_cost") or 0.0)
     projected = hourly_rate * args.max_instance_minutes / 60.0
@@ -249,6 +263,8 @@ def run_offer(args: argparse.Namespace) -> int:
     start_account = client.account()
     label = f"vast-benchmark-{args.category}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
     preflight = {
+        "category": args.category,
+        "label": args.label,
         "offer_id": args.offer_id,
         "machine_id": offer.get("machine_id"),
         "gpu_name": offer.get("gpu_name"),
@@ -263,6 +279,7 @@ def run_offer(args: argparse.Namespace) -> int:
 
     instance_id: int | None = None
     instance_started = time.monotonic()
+    instance_deadline = instance_started + args.max_instance_minutes * 60
     result_path: Path | None = None
     benchmark_returncode = 1
     try:
@@ -285,13 +302,17 @@ def run_offer(args: argparse.Namespace) -> int:
         )
         client.attach_ssh_key(instance_id, public_key_path.read_text())
         print(json.dumps({"created_instance": instance_id}), flush=True)
-        instance = _wait_for_running(client, instance_id, args.startup_timeout_seconds)
+        instance = _wait_for_running(
+            client,
+            instance_id,
+            _bounded_timeout(instance_deadline, args.startup_timeout_seconds),
+        )
         known_hosts = str(results_dir / f"known_hosts_{instance_id}")
         host, port, ssh, python_bin = _wait_for_ssh(
             instance,
             ssh_key,
             known_hosts,
-            args.ssh_timeout_seconds,
+            _bounded_timeout(instance_deadline, args.ssh_timeout_seconds),
         )
         _upload_project(ssh, project_dir)
 
@@ -335,7 +356,7 @@ def run_offer(args: argparse.Namespace) -> int:
         completed = subprocess.run(
             [*ssh, remote_command],
             check=False,
-            timeout=args.benchmark_max_seconds + 180,
+            timeout=_bounded_timeout(instance_deadline, args.benchmark_max_seconds + 180),
         )
         benchmark_returncode = completed.returncode
         result_path = results_dir / f"{args.category}-{instance_id}.json"
@@ -392,7 +413,9 @@ def run_offer(args: argparse.Namespace) -> int:
                 ),
                 flush=True,
             )
-    return 0 if benchmark_returncode in (0, 2) and result_path else 1
+    # Exit non-zero for partial benchmarks after ingesting their diagnostics so
+    # batch orchestration can replace them instead of counting them as accepted.
+    return 0 if benchmark_returncode == 0 and result_path else 1
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -415,7 +438,13 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--ssh-timeout-seconds", type=int, default=300)
     run_parser.add_argument("--max-instance-minutes", type=float, default=30.0)
     run_parser.add_argument("--max-hourly", type=float, default=1.2)
+    run_parser.add_argument("--min-cuda", type=float, default=12.9)
     run_parser.add_argument("--budget", type=float, default=5.0)
+    run_parser.add_argument(
+        "--allow-existing-instances",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
     return parser
 
 

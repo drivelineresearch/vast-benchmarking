@@ -1,13 +1,26 @@
 from __future__ import annotations
 
 from vast_benchmarking.models import BenchmarkResult
-from vast_benchmarking.storage import save_result
+from vast_benchmarking.storage import save_machine_annotations, save_result
 from vast_benchmarking.web import create_app
 
 
 def test_dashboard_and_detail_render(tmp_path, sample_result: BenchmarkResult) -> None:
     database = tmp_path / "benchmarks.sqlite"
     save_result(database, sample_result)
+    save_machine_annotations(
+        database,
+        [
+            {
+                "machine_id": 456,
+                "category": "gpu-heavy",
+                "disposition": "recommended",
+                "rating": "A",
+                "notes": "Strong CV throughput.",
+                "tags": ["cv"],
+            }
+        ],
+    )
     app = create_app(str(database))
     app.config.update(TESTING=True)
 
@@ -18,6 +31,8 @@ def test_dashboard_and_detail_render(tmp_path, sample_result: BenchmarkResult) -
     assert b"Overall leaderboard" in response.data
     assert b"All run history" in response.data
     assert b"accepted" in response.data
+    assert b"Ratings and known issues" in response.data
+    assert b"Strong CV throughput" in response.data
 
     response = client.get("/api/runs")
     assert response.status_code == 200

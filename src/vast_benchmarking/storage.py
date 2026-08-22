@@ -4,6 +4,7 @@ import json
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -60,6 +61,17 @@ CREATE TABLE IF NOT EXISTS rental_events (
     estimated_cost REAL,
     details_json TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS machine_annotations (
+    machine_id INTEGER PRIMARY KEY,
+    category TEXT,
+    disposition TEXT NOT NULL,
+    rating TEXT,
+    notes TEXT NOT NULL,
+    tags_json TEXT NOT NULL,
+    source TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
 """
 
 
@@ -78,8 +90,9 @@ def _gpu_summary(system: dict[str, Any]) -> str:
 def connect(path: str | Path) -> Iterator[sqlite3.Connection]:
     db_path = Path(path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(db_path)
+    connection = sqlite3.connect(db_path, timeout=30)
     connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA busy_timeout = 30000")
     connection.execute("PRAGMA foreign_keys = ON")
     connection.execute("PRAGMA journal_mode = WAL")
     try:
@@ -91,7 +104,7 @@ def connect(path: str | Path) -> Iterator[sqlite3.Connection]:
 def init_db(path: str | Path) -> None:
     with connect(path) as connection:
         connection.executescript(SCHEMA_SQL)
-        connection.execute("PRAGMA user_version = 1")
+        connection.execute("PRAGMA user_version = 2")
         connection.commit()
 
 
@@ -229,13 +242,86 @@ def list_runs(path: str | Path) -> list[dict[str, Any]]:
         run["config"] = json.loads(run.pop("config_json"))
         run["vast"] = json.loads(run.pop("vast_json"))
         run["errors"] = json.loads(run.pop("errors_json"))
-        run.pop("raw_json", None)
+        raw = json.loads(run.pop("raw_json"))
+        run["gpu_results"] = raw.get("gpu_results", [])
         runs.append(run)
     return runs
 
 
 def get_run(path: str | Path, run_id: str) -> dict[str, Any] | None:
     return next((run for run in list_runs(path) if run["run_id"] == run_id), None)
+
+
+def save_machine_annotations(
+    path: str | Path, annotations: list[dict[str, Any]]
+) -> None:
+    init_db(path)
+    now = datetime.now(UTC).isoformat()
+    rows: list[tuple[Any, ...]] = []
+    for annotation in annotations:
+        if not annotation.get("machine_id") or not annotation.get("disposition"):
+            raise ValueError("machine annotations require machine_id and disposition")
+        rows.append(
+            (
+                int(annotation["machine_id"]),
+                annotation.get("category"),
+                str(annotation["disposition"]),
+                annotation.get("rating"),
+                str(annotation.get("notes") or ""),
+                json.dumps(annotation.get("tags") or [], sort_keys=True),
+                str(annotation.get("source") or "local"),
+                str(annotation.get("updated_at") or now),
+            )
+        )
+    with connect(path) as connection:
+        connection.executemany(
+            """
+            INSERT INTO machine_annotations (
+                machine_id, category, disposition, rating, notes,
+                tags_json, source, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(machine_id) DO UPDATE SET
+                category = excluded.category,
+                disposition = excluded.disposition,
+                rating = excluded.rating,
+                notes = excluded.notes,
+                tags_json = excluded.tags_json,
+                source = excluded.source,
+                updated_at = excluded.updated_at
+            """,
+            rows,
+        )
+        connection.commit()
+
+
+def list_machine_annotations(path: str | Path) -> list[dict[str, Any]]:
+    init_db(path)
+    with connect(path) as connection:
+        rows = connection.execute(
+            """
+            SELECT * FROM machine_annotations
+            ORDER BY
+                CASE disposition WHEN 'known-bad' THEN 0 WHEN 'incompatible' THEN 1 ELSE 2 END,
+                machine_id
+            """
+        ).fetchall()
+    annotations: list[dict[str, Any]] = []
+    for row in rows:
+        annotation = dict(row)
+        annotation["tags"] = json.loads(annotation.pop("tags_json"))
+        annotations.append(annotation)
+    return annotations
+
+
+def get_machine_annotation(path: str | Path, machine_id: int) -> dict[str, Any] | None:
+    return next(
+        (
+            annotation
+            for annotation in list_machine_annotations(path)
+            if annotation["machine_id"] == machine_id
+        ),
+        None,
+    )
 
 
 def rental_summary(path: str | Path) -> dict[str, Any]:

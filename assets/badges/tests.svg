@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="132" height="28" role="img" aria-label="tests: 7 passing">
-  <title>tests: 7 passing</title>
-  <mask id="r"><rect width="132" height="28" rx="5" fill="#fff"/></mask>
-  <g mask="url(#r)"><rect width="50" height="28" fill="#141416"/><rect x="50" width="82" height="28" fill="#e41f2b"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="28" role="img" aria-label="tests: 17 passing">
+  <title>tests: 17 passing</title>
+  <mask id="r"><rect width="140" height="28" rx="5" fill="#fff"/></mask>
+  <g mask="url(#r)"><rect width="50" height="28" fill="#141416"/><rect x="50" width="90" height="28" fill="#e41f2b"/></g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,sans-serif" font-size="11" font-weight="700">
-    <text x="25" y="18">TESTS</text><text x="91" y="18">7 PASSING</text>
+    <text x="25" y="18">TESTS</text><text x="95" y="18">17 PASSING</text>
   </g>
 </svg>

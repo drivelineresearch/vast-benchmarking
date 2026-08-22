@@ -19,7 +19,18 @@
   <article><span>CPU</span><strong>{{ run.cpu_model }}</strong></article>
   <article><span>Effective cores</span><strong>{{ run.cpu_effective }}</strong></article>
   <article><span>Hourly rate</span><strong>{% if run.hourly_rate is not none %}${{ '%.3f'|format(run.hourly_rate) }}{% else %}Local{% endif %}</strong></article>
+  {% if run.system.gpus %}<article><span>Concurrent GPU coverage</span><strong>{{ run.gpu_results|length }} / {{ run.system.gpus|length }}</strong></article>{% endif %}
 </section>
+
+{% if annotation %}
+<section class="machine-note {{ annotation.disposition }}">
+  <div>
+    <span>{{ annotation.disposition }}</span>
+    <strong>{{ annotation.rating or 'Operational note' }}</strong>
+  </div>
+  <p>{{ annotation.notes }}</p>
+</section>
+{% endif %}
 
 {% if run.errors %}
 <section class="warning-panel">

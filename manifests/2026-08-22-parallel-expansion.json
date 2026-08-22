@@ -1,0 +1,64 @@
+{
+  "runs": [
+    {
+      "offer_id": 46432829,
+      "category": "gpu-heavy",
+      "label": "8x RTX 5060 Ti 16GB / EPYC 9334"
+    },
+    {
+      "offer_id": 48302599,
+      "category": "gpu-heavy",
+      "label": "8x RTX 5060 Ti 16GB / EPYC 7502"
+    },
+    {
+      "offer_id": 42541513,
+      "category": "gpu-heavy",
+      "label": "8x RTX 5060 Ti 16GB / EPYC 7K62"
+    },
+    {
+      "offer_id": 44213773,
+      "category": "gpu-heavy",
+      "label": "8x RTX 5060 Ti 16GB / Threadripper Pro 3975WX"
+    },
+    {
+      "offer_id": 31119271,
+      "category": "high-effective-cpu",
+      "label": "384 listed effective cores / EPYC 9654 / RTX 5060 Ti"
+    },
+    {
+      "offer_id": 46480429,
+      "category": "high-effective-cpu",
+      "label": "384 listed effective cores / EPYC 9654 / RTX A2000"
+    },
+    {
+      "offer_id": 36863856,
+      "category": "high-effective-cpu",
+      "label": "256 listed effective cores / EPYC 7B12 / RTX 3060"
+    },
+    {
+      "offer_id": 47576625,
+      "category": "high-effective-cpu",
+      "label": "205 listed effective cores / EPYC 7B13 / 8x RTX 5060 Ti"
+    },
+    {
+      "offer_id": 47062240,
+      "category": "fast-single-cpu",
+      "label": "Ryzen 9 9950X3D / RTX 3060"
+    },
+    {
+      "offer_id": 48211347,
+      "category": "fast-single-cpu",
+      "label": "Ryzen 9 9950X / RTX 4080"
+    },
+    {
+      "offer_id": 41779291,
+      "category": "fast-single-cpu",
+      "label": "Core Ultra 9 285K / RTX 5080"
+    },
+    {
+      "offer_id": 46245722,
+      "category": "fast-single-cpu",
+      "label": "Core i9-14900KF / RTX 4060 Ti"
+    }
+  ]
+}

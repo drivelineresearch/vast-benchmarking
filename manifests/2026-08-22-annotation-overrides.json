@@ -1,0 +1,28 @@
+{
+  "machines": [
+    {
+      "machine_id": 14364,
+      "category": "gpu-heavy",
+      "disposition": "incompatible",
+      "rating": null,
+      "notes": "Host CUDA ceiling was 12.8; the CUDA 12.9 benchmark image produced PyTorch error 804. Rental was stopped without rating the hardware.",
+      "tags": ["cuda-12.8", "image-requires-12.9"]
+    },
+    {
+      "machine_id": 37271,
+      "category": "gpu-heavy",
+      "disposition": "incompatible",
+      "rating": null,
+      "notes": "Host CUDA ceiling was 12.8, below the benchmark image runtime requirement; rental was stopped before benchmarking.",
+      "tags": ["cuda-12.8", "image-requires-12.9"]
+    },
+    {
+      "machine_id": 145504,
+      "category": "gpu-heavy",
+      "disposition": "inconclusive",
+      "rating": null,
+      "notes": "A redundant hedge rental was canceled while still provisioning after another machine completed the required 8/8-GPU result; this machine was not evaluated.",
+      "tags": ["redundant-hedge", "canceled-before-benchmark"]
+    }
+  ]
+}

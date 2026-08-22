@@ -1,0 +1,34 @@
+{
+  "runs": [
+    {
+      "offer_id": 44479299,
+      "category": "gpu-heavy",
+      "label": "8x RTX 3060 12GB / Xeon E5-2697A v4"
+    },
+    {
+      "offer_id": 34596405,
+      "category": "gpu-heavy",
+      "label": "8x RTX 3060 12GB / Xeon E5-2673 v4"
+    },
+    {
+      "offer_id": 47874973,
+      "category": "gpu-heavy",
+      "label": "8x RTX 4070 Super 12GB / Xeon E5-2673 v4 D"
+    },
+    {
+      "offer_id": 43421246,
+      "category": "high-effective-cpu",
+      "label": "128 listed effective cores / EPYC 7V13 / 2x RTX 5070 Ti"
+    },
+    {
+      "offer_id": 46027343,
+      "category": "high-effective-cpu",
+      "label": "128 listed effective cores / EPYC 7702 / RTX 3060 Ti"
+    },
+    {
+      "offer_id": 41779291,
+      "category": "fast-single-cpu",
+      "label": "Core Ultra 9 285K / RTX 5080"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "runs": [
+    {
+      "offer_id": 46657928,
+      "category": "high-effective-cpu",
+      "label": "128 listed effective cores / EPYC 7C13 / 4x Tesla V100"
+    }
+  ]
+}

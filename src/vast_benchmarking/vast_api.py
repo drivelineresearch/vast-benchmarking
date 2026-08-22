@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -56,14 +57,30 @@ class VastClient:
                 "Content-Type": "application/json",
             },
         )
-        try:
-            with urllib.request.urlopen(request, timeout=timeout) as response:
-                raw = response.read().decode()
-        except urllib.error.HTTPError as exc:
-            body = exc.read().decode(errors="replace")[:1000]
-            raise VastAPIError(f"Vast API {method} {path} returned {exc.code}: {body}") from exc
-        except urllib.error.URLError as exc:
-            raise VastAPIError(f"Vast API {method} {path} failed: {exc}") from exc
+        raw = ""
+        for attempt in range(5):
+            try:
+                with urllib.request.urlopen(request, timeout=timeout) as response:
+                    raw = response.read().decode()
+                break
+            except urllib.error.HTTPError as exc:
+                body = exc.read().decode(errors="replace")[:1000]
+                # Do not blindly replay instance-creation PUTs. A provider may
+                # have accepted the rental even if the response was throttled,
+                # and a replay could create an orphaned second instance.
+                if exc.code == 429 and method != "PUT" and attempt < 4:
+                    retry_after = exc.headers.get("Retry-After", "") if exc.headers else ""
+                    try:
+                        delay = max(float(retry_after), float(2**attempt))
+                    except ValueError:
+                        delay = float(2**attempt)
+                    time.sleep(delay)
+                    continue
+                raise VastAPIError(
+                    f"Vast API {method} {path} returned {exc.code}: {body}"
+                ) from exc
+            except urllib.error.URLError as exc:
+                raise VastAPIError(f"Vast API {method} {path} failed: {exc}") from exc
         if not raw:
             return {}
         try:
@@ -103,6 +120,8 @@ class VastClient:
     def instance(self, instance_id: int) -> dict[str, Any]:
         payload = self.request("GET", f"instances/{instance_id}/")
         instance = payload.get("instances", payload)
+        if instance is None:
+            return {}
         if isinstance(instance, list):
             return instance[0] if instance else {}
         return instance
