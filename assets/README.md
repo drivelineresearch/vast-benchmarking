@@ -1,13 +1,12 @@
 # Repository artwork
 
-`vast-benchmarking-banner.png` was generated with OpenAI's built-in image-generation
-workflow for this repository. It is a text-free, ultra-wide technical illustration of
-GPU concurrency, effective CPU capacity, memory bandwidth, and disk throughput using
-the dashboard's black, graphite, red, and white palette.
+The repository artwork was generated with OpenAI's built-in image-generation workflow.
+The active dashboard and README header is
+`src/vast_benchmarking/static/vast-benchmarking-header-v2.png`, a text-free technical
+illustration of GPU concurrency, effective CPU capacity, memory bandwidth, and disk
+throughput using the dashboard's black, graphite, red, and white palette.
 
 Generation constraints included no people, logos, vendor marks, text, numbers, letters,
-badges, or watermarks. SHA-256:
-`1713deae9bfb3874b9ca5bfd0df3af26d0b9102f8edb54884eb38e8730870134`.
-
-The SVG badges are deterministic repository assets generated from the accepted
-2026-08-22 benchmark snapshot documented in the root README.
+badges, or watermarks. The prior `vast-benchmarking-banner.png` is retained as archival
+repository artwork. README status badges are GitHub Actions workflow badges, not local
+generated SVGs.

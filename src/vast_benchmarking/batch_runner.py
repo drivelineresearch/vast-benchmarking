@@ -164,7 +164,7 @@ def run_batch(args: argparse.Namespace) -> int:
     args.db = db_path
     args.results_dir = str(Path(args.results_dir).resolve())
     args.project_dir = str(Path(args.project_dir).resolve())
-    args.ssh_key = str(Path(args.ssh_key).resolve())
+    args.ssh_key = str(Path(args.ssh_key).expanduser().resolve())
     spent = float(rental_summary(db_path).get("estimated_cost") or 0)
     preflight = preflight_batch(
         client,
@@ -243,7 +243,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--db", default="results/benchmarks.sqlite")
     parser.add_argument("--results-dir", default="results")
     parser.add_argument("--project-dir", default=".")
-    parser.add_argument("--ssh-key", default="/home/kyle/.ssh/vast_benchmark_ed25519")
+    parser.add_argument("--ssh-key", default="~/.ssh/vast_benchmark_ed25519")
     parser.add_argument("--image", default=DEFAULT_IMAGE)
     parser.add_argument("--disk-gb", type=int, default=32)
     parser.add_argument("--profile", choices=("smoke", "standard"), default="standard")

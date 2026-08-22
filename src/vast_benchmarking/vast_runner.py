@@ -225,7 +225,7 @@ def run_offer(args: argparse.Namespace) -> int:
     db_path = str(Path(args.db).resolve())
     project_dir = Path(args.project_dir).resolve()
     results_dir = Path(args.results_dir).resolve()
-    ssh_key = str(Path(args.ssh_key).resolve())
+    ssh_key = str(Path(args.ssh_key).expanduser().resolve())
     if not project_dir.joinpath("pyproject.toml").is_file():
         raise RuntimeError(f"project directory is invalid: {project_dir}")
     if not Path(ssh_key).is_file():
@@ -429,7 +429,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--db", default="results/benchmarks.sqlite")
     run_parser.add_argument("--results-dir", default="results")
     run_parser.add_argument("--project-dir", default=".")
-    run_parser.add_argument("--ssh-key", default="/home/kyle/.ssh/vast_benchmark_ed25519")
+    run_parser.add_argument("--ssh-key", default="~/.ssh/vast_benchmark_ed25519")
     run_parser.add_argument("--image", default=DEFAULT_IMAGE)
     run_parser.add_argument("--disk-gb", type=int, default=32)
     run_parser.add_argument("--profile", choices=("smoke", "standard"), default="standard")

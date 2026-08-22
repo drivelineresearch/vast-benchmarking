@@ -4,11 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-User=kyle
-Group=kyle
-WorkingDirectory=/home/kyle/vast-benchmarking
-Environment=VAST_BENCHMARK_DB=/home/kyle/vast-benchmarking/results/benchmarks.sqlite
-ExecStart=/home/kyle/vast-benchmarking/.venv/bin/gunicorn --bind 127.0.0.1:18100 --workers 2 --timeout 60 --access-logfile - --error-logfile - vast_benchmarking.wsgi:app
+User=vast-benchmark
+Group=vast-benchmark
+WorkingDirectory=/opt/vast-benchmarking
+Environment=VAST_BENCHMARK_DB=/var/lib/vast-benchmark/benchmarks.sqlite
+ExecStart=/opt/vast-benchmarking/.venv/bin/gunicorn --bind 127.0.0.1:18100 --workers 2 --timeout 60 --access-logfile - --error-logfile - vast_benchmarking.wsgi:app
 Restart=on-failure
 RestartSec=5
 PrivateTmp=true

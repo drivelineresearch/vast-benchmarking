@@ -16,6 +16,16 @@ from .storage import (
 )
 
 
+def _compact_number(value: float) -> str:
+    """Format dense dashboard values without hiding useful precision."""
+    magnitude = abs(value)
+    if magnitude >= 1_000_000:
+        return f"{value / 1_000_000:.2f}M"
+    if magnitude >= 1_000:
+        return f"{value / 1_000:.2f}k"
+    return f"{value:.2f}"
+
+
 def _dashboard_data(db_path: str) -> dict[str, Any]:
     all_runs = list_runs(db_path)
     annotations = list_machine_annotations(db_path)
@@ -40,23 +50,35 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
         runs.append(run)
     leaderboards: dict[str, dict[str, Any]] = {}
     for key, (metric_name, label) in LEADERBOARD_METRICS.items():
-        rows = metric_leaderboard(runs, metric_name, limit=6)
+        rows = metric_leaderboard(runs, metric_name, limit=max(len(runs), 6))
         top_value = max((row["value"] for row in rows), default=0)
-        top_price = max(
-            (row["hourly_rate"] or 0 for row in rows),
+        for row in rows:
+            row["performance_percent"] = row["value"] / top_value * 100 if top_value else 0
+            hourly_rate = row["hourly_rate"] or 0
+            row["value_per_dollar"] = row["value"] / hourly_rate if hourly_rate > 0 else None
+        top_value_per_dollar = max(
+            (row["value_per_dollar"] or 0 for row in rows),
             default=0,
         )
         for row in rows:
-            row["performance_percent"] = row["value"] / top_value * 100 if top_value else 0
-            row["price_percent"] = (
-                (row["hourly_rate"] or 0) / top_price * 100 if top_price else 0
+            row["value_per_dollar_percent"] = (
+                (row["value_per_dollar"] or 0) / top_value_per_dollar * 100
+                if top_value_per_dollar
+                else 0
+            )
+            row["value_per_dollar_display"] = (
+                _compact_number(row["value_per_dollar"])
+                if row["value_per_dollar"] is not None
+                else "Unavailable"
             )
         leaderboards[key] = {
             "title": label,
             "metric": metric_name,
             "rows": rows,
             "top_value": top_value,
-            "top_price": top_price,
+            "top_value_per_dollar": top_value_per_dollar,
+            "display_limit": min(6, len(rows)),
+            "candidate_count": len(rows),
         }
     complete = len(runs)
     total_gpu_count = sum(

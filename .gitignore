@@ -9,3 +9,4 @@ build/
 results/*
 !results/.gitkeep
 .env
+!.env.example

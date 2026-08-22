@@ -29,4 +29,41 @@ document.addEventListener("DOMContentLoaded", () => {
       tabs[next].click();
     });
   }
+
+  for (const panel of panels) {
+    const sortButtons = Array.from(panel.querySelectorAll("[data-sort-key]"));
+    const displayLimit = Number.parseInt(panel.dataset.displayLimit || "6", 10);
+
+    const sortRows = (selector, key) => {
+      const container = panel.querySelector(selector);
+      if (!container) return;
+      const rows = Array.from(container.children);
+      rows.sort((left, right) => {
+        const leftValue = Number.parseFloat(left.dataset[key] || "-1");
+        const rightValue = Number.parseFloat(right.dataset[key] || "-1");
+        return rightValue - leftValue;
+      });
+      rows.forEach((row, index) => {
+        container.appendChild(row);
+        row.hidden = index >= displayLimit;
+        const rank = row.querySelector("[data-rank-target]");
+        if (rank) rank.textContent = String(index + 1);
+      });
+    };
+
+    const applySort = (key) => {
+      sortRows(".bar-chart", key);
+      sortRows(".machine-detail-list", key);
+      sortButtons.forEach((button) => {
+        const selected = button.dataset.sortKey === key;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-pressed", String(selected));
+      });
+    };
+
+    sortButtons.forEach((button) => {
+      button.addEventListener("click", () => applySort(button.dataset.sortKey));
+    });
+    applySort("performance");
+  }
 });

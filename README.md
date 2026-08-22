@@ -1,17 +1,12 @@
 <p align="center">
-  <img src="assets/vast-benchmarking-banner.png" alt="Vast Benchmarking hardware throughput banner" width="100%">
+  <img src="src/vast_benchmarking/static/vast-benchmarking-header-v2.png" alt="Abstract GPU, CPU, memory, and storage throughput artwork" width="100%">
 </p>
 
 <h1 align="center">Vast Benchmarking</h1>
 
 <p align="center">
   <a href="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml"><img src="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="assets/badges/tests.svg" alt="18 tests passing">
-  <img src="assets/badges/runtime.svg" alt="225 second maximum measured runtime">
-  <img src="assets/badges/gpu-cv.svg" alt="116,501 CV images per second">
-  <img src="assets/badges/effective-cpu.svg" alt="368.6 effective CPU cores">
-  <img src="assets/badges/vast-cost.svg" alt="2.85 dollars conservative Vast campaign estimate">
-  <img src="assets/badges/python.svg" alt="Python 3.10 or newer">
+  <a href="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/public-safety.yml"><img src="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/public-safety.yml/badge.svg" alt="Public safety"></a>
 </p>
 
 A bounded Python benchmark for comparing Vast.ai Docker offers on the workloads that
@@ -76,8 +71,11 @@ uv run vast-benchmark serve \
 Open <http://127.0.0.1:8080>. The health endpoint is `/healthz`, and normalized dashboard
 data is available from `/api/runs`.
 
-The dashboard includes an accepted-results leaderboard and an all-run history. The latter
-keeps partial and superseded runs visible without allowing them to affect rankings.
+The dashboard has six category leaderboards and an all-run history. Each category uses
+its fastest accepted machine as the 100% baseline, annotates the measured bar with the
+historical hourly rate and performance-per-dollar, and can be sorted by raw performance
+or value. Raw performance is the default. Partial and superseded runs stay visible in
+history without affecting rankings.
 Machine ratings and time-scoped provisioning notes are stored locally by Vast machine ID
 and exposed on the dashboard and `/api/runs`. Vast's console labels are temporary labels
 on a rental instance, not durable annotations on the underlying marketplace machine.
@@ -198,8 +196,10 @@ single-thread leaderboard.
 ```bash
 uv run ruff check src tests
 uv run pytest
+uv run python scripts/check_public_release.py
 ```
 
-The repository is prepared for a private `drivelineresearch/vast-benchmarking` remote.
-Do not commit `/etc/vastai.env`, API credentials, SSH private keys, SQLite databases, or
-raw result JSON files.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), and the
+[`public-release checklist`](docs/PUBLIC_RELEASE.md) before changing repository
+visibility. Never commit `/etc/vastai.env`, API credentials, SSH private keys, SQLite
+databases, or raw result JSON files.

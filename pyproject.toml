@@ -35,7 +35,7 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-vast_benchmarking = ["templates/*.html", "static/*.css", "static/*.js"]
+vast_benchmarking = ["templates/*.html", "static/*.css", "static/*.js", "static/*.png"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

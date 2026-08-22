@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Leaderboard{% endblock %}
 {% block content %}
-<section class="hero">
-  <div>
+<section class="hero hero-compact">
+  <img class="hero-art" src="{{ url_for('static', filename='vast-benchmarking-header-v2.png') }}" alt="" aria-hidden="true">
+  <div class="hero-content">
     <p class="eyebrow">HARDWARE INTELLIGENCE</p>
-    <h1>Which machine<br><span>actually performs?</span></h1>
+    <h1>Which machine <span>actually performs?</span></h1>
     <p class="hero-copy">
-      A bounded, reproducible stress test for CV-heavy GPUs, effective CPU concurrency,
-      memory throughput, and durable disk speed.
+      Reproducible GPU, effective CPU, memory, and disk stress tests in under ten minutes.
     </p>
-  </div>
-  <div class="hero-meta">
-    <span>Latest snapshot</span>
-    <strong>{{ runs[0].finished_at[:19].replace('T', ' ') if runs else 'No runs yet' }}</strong>
-    <span>Benchmark status</span>
-    <strong>{{ summary.complete_count }} accepted / {{ summary.run_count }} stored</strong>
+    <div class="hero-meta">
+      <span><small>Latest snapshot</small><strong>{{ runs[0].finished_at[:19].replace('T', ' ') if runs else 'No runs yet' }}</strong></span>
+      <span><small>Benchmark status</small><strong>{{ summary.complete_count }} accepted / {{ summary.run_count }} stored</strong></span>
+    </div>
   </div>
 </section>
 
@@ -40,54 +38,47 @@
   </div>
 
   {% for key, board in leaderboards.items() %}
-  <section class="category-board{% if loop.first %} active{% endif %}" id="panel-{{ key }}" data-panel="{{ key }}" role="tabpanel" aria-labelledby="tab-{{ key }}"{% if not loop.first %} hidden{% endif %}>
+  <section class="category-board{% if loop.first %} active{% endif %}" id="panel-{{ key }}" data-panel="{{ key }}" data-display-limit="{{ board.display_limit }}" role="tabpanel" aria-labelledby="tab-{{ key }}"{% if not loop.first %} hidden{% endif %}>
     {% if board.rows %}
     <div class="category-title">
       <div>
         <p class="eyebrow">{{ board.metric }}</p>
         <h2>{{ board.title }}</h2>
       </div>
-      <p>Top {{ board.rows|length }} accepted machines. Higher performance is better; rental prices are the rates captured when each benchmark ran.</p>
+      <p>Showing the top {{ board.display_limit }} of {{ board.candidate_count }} accepted machines. Bars are percent of the category leader; prices are historical rates captured at benchmark time.</p>
     </div>
 
-    <div class="chart-grid">
-      <figure class="chart-card">
-        <figcaption>
+    <figure class="chart-card">
+      <figcaption>
+        <span class="chart-caption-copy">
           <strong>Measured performance</strong>
           <span>{{ board.title }} · {{ board.rows[0].unit }} · zero baseline</span>
-        </figcaption>
-        <div class="bar-chart" role="img" aria-label="{{ board.title }} performance by Vast machine ID">
-          {% for row in board.rows %}
-          <div class="chart-row" aria-label="Machine {{ row.machine_id }}: {{ '%.2f'|format(row.value) }} {{ row.unit }}">
-            <span class="chart-label"><strong>#{{ row.machine_id }}</strong><small>{{ row.label }}</small></span>
-            <span class="chart-track"><i class="performance-fill" style="width: {{ '%.1f'|format(row.performance_percent) }}%"></i></span>
-            <span class="chart-value">{{ '%.2f'|format(row.value) }}</span>
-          </div>
-          {% endfor %}
+        </span>
+        <span class="sort-controls" aria-label="Sort {{ board.title }} rankings">
+          <button class="sort-button active" type="button" data-sort-key="performance" aria-pressed="true">Max performance</button>
+          <button class="sort-button" type="button" data-sort-key="value" aria-pressed="false">Best perf / $</button>
+        </span>
+      </figcaption>
+      <div class="bar-chart" aria-label="{{ board.title }} performance by Vast machine ID">
+        {% for row in board.rows %}
+        <div class="chart-row" data-performance="{{ row.value }}" data-value="{{ row.value_per_dollar or -1 }}"{% if loop.index > board.display_limit %} hidden{% endif %} aria-label="Machine {{ row.machine_id }}: {{ '%.2f'|format(row.value) }} {{ row.unit }}, {{ '%.1f'|format(row.performance_percent) }} percent of best, ${{ '%.3f'|format(row.hourly_rate or 0) }} per hour">
+          <span class="chart-label"><strong><i data-rank-target>{{ loop.index }}</i> · #{{ row.machine_id }}</strong><small>{{ row.label }}</small></span>
+          <span class="chart-track"><i class="performance-fill" style="width: {{ '%.1f'|format(row.performance_percent) }}%"></i></span>
+          <span class="chart-metrics">
+            <strong>{{ '%.2f'|format(row.value) }} <small>{{ row.unit }}</small></strong>
+            <b>{{ '%.1f'|format(row.performance_percent) }}% of best</b>
+            <b class="price">${{ '%.3f'|format(row.hourly_rate or 0) }}/hr</b>
+            <b title="Measured performance divided by hourly rental rate">{{ row.value_per_dollar_display }} perf/$</b>
+          </span>
         </div>
-      </figure>
-
-      <figure class="chart-card">
-        <figcaption>
-          <strong>Hourly rental price</strong>
-          <span>Same machine order · USD/hour at benchmark time · zero baseline</span>
-        </figcaption>
-        <div class="bar-chart" role="img" aria-label="Hourly rental price by Vast machine ID">
-          {% for row in board.rows %}
-          <div class="chart-row" aria-label="Machine {{ row.machine_id }}: ${{ '%.3f'|format(row.hourly_rate or 0) }} per hour">
-            <span class="chart-label"><strong>#{{ row.machine_id }}</strong><small>Offer #{{ row.offer_id }}</small></span>
-            <span class="chart-track"><i class="price-fill" style="width: {{ '%.1f'|format(row.price_percent) }}%"></i></span>
-            <span class="chart-value">${{ '%.3f'|format(row.hourly_rate or 0) }}</span>
-          </div>
-          {% endfor %}
-        </div>
-      </figure>
-    </div>
+        {% endfor %}
+      </div>
+    </figure>
 
     <div class="machine-detail-list">
       {% for row in board.rows %}
-      <a class="machine-detail-card" href="{{ url_for('run_detail', run_id=row.run_id) }}">
-        <span class="rank">{{ loop.index }}</span>
+      <a class="machine-detail-card" href="{{ url_for('run_detail', run_id=row.run_id) }}" data-performance="{{ row.value }}" data-value="{{ row.value_per_dollar or -1 }}"{% if loop.index > board.display_limit %} hidden{% endif %}>
+        <span class="rank" data-rank-target>{{ loop.index }}</span>
         <span class="machine-identity">
           <small>VAST MACHINE ID</small>
           <strong>#{{ row.machine_id }}</strong>
@@ -97,10 +88,11 @@
         <span class="machine-result">
           <small>{{ board.title }}</small>
           <strong>{{ '%.2f'|format(row.value) }} <em>{{ row.unit }}</em></strong>
-        </span>
-        <span class="machine-price">
-          <small>RENTAL PRICE</small>
-          <strong>${{ '%.3f'|format(row.hourly_rate or 0) }}<em>/hr</em></strong>
+          <span class="result-meta">
+            <b>{{ '%.1f'|format(row.performance_percent) }}% of best</b>
+            <b class="price">${{ '%.3f'|format(row.hourly_rate or 0) }}/hr</b>
+            <b>{{ row.value_per_dollar_display }} perf/$</b>
+          </span>
         </span>
         <span class="machine-spec-grid">
           <span class="machine-spec"><small>GPU</small><strong>{{ row.gpu_summary }}</strong><em>{% if row.gpu_count %}{{ '%.1f'|format(row.gpu_vram_gib) }} GiB each{% else %}No CUDA GPU{% endif %}</em></span>
