@@ -28,7 +28,14 @@ def test_dashboard_and_detail_render(tmp_path, sample_result: BenchmarkResult) -
     response = client.get("/")
     assert response.status_code == 200
     assert b"Sample GPU Host" in response.data
-    assert b"Overall leaderboard" in response.data
+    assert b"Overall leaderboard" not in response.data
+    assert b"Category rankings" in response.data
+    assert b"Measured performance" in response.data
+    assert b"Hourly rental price" in response.data
+    assert b"Machine #456" in response.data
+    assert b"Offer #123" in response.data
+    assert b"Instance #789" in response.data
+    assert b"$0.500" in response.data
     assert b"All run history" in response.data
     assert b"accepted" in response.data
     assert b"Ratings and known issues" in response.data
@@ -36,7 +43,15 @@ def test_dashboard_and_detail_render(tmp_path, sample_result: BenchmarkResult) -
 
     response = client.get("/api/runs")
     assert response.status_code == 200
-    assert len(response.get_json()["all_runs"]) == 1
+    payload = response.get_json()
+    assert len(payload["all_runs"]) == 1
+    row = payload["leaderboards"]["gpu_cv"]["rows"][0]
+    assert row["machine_id"] == 456
+    assert row["offer_id"] == 123
+    assert row["instance_id"] == 789
+    assert row["hourly_rate"] == 0.5
+    assert row["performance_percent"] == 100
+    assert row["price_percent"] == 100
 
     response = client.get(f"/runs/{sample_result.run_id}")
     assert response.status_code == 200

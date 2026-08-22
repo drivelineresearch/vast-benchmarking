@@ -6,7 +6,7 @@ from typing import Any
 from flask import Flask, abort, jsonify, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from .scoring import LEADERBOARD_METRICS, metric_leaderboard, relative_scores
+from .scoring import LEADERBOARD_METRICS, metric_leaderboard
 from .storage import (
     get_machine_annotation,
     get_run,
@@ -38,21 +38,32 @@ def _dashboard_data(db_path: str) -> dict[str, Any]:
         seen.add(key)
         run["leaderboard_state"] = "accepted"
         runs.append(run)
-    scored = relative_scores(runs)
-    leaderboards = {
-        key: {
+    leaderboards: dict[str, dict[str, Any]] = {}
+    for key, (metric_name, label) in LEADERBOARD_METRICS.items():
+        rows = metric_leaderboard(runs, metric_name, limit=6)
+        top_value = max((row["value"] for row in rows), default=0)
+        top_price = max(
+            (row["hourly_rate"] or 0 for row in rows),
+            default=0,
+        )
+        for row in rows:
+            row["performance_percent"] = row["value"] / top_value * 100 if top_value else 0
+            row["price_percent"] = (
+                (row["hourly_rate"] or 0) / top_price * 100 if top_price else 0
+            )
+        leaderboards[key] = {
             "title": label,
             "metric": metric_name,
-            "rows": metric_leaderboard(runs, metric_name, limit=10),
+            "rows": rows,
+            "top_value": top_value,
+            "top_price": top_price,
         }
-        for key, (metric_name, label) in LEADERBOARD_METRICS.items()
-    }
     complete = len(runs)
     total_gpu_count = sum(
         int(run.get("system", {}).get("gpus") and len(run["system"]["gpus"]) or 0) for run in runs
     )
     return {
-        "runs": scored,
+        "runs": runs,
         "all_runs": all_runs,
         "machine_annotations": annotations,
         "leaderboards": leaderboards,

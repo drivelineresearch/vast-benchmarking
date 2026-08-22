@@ -56,15 +56,53 @@ h2 { font-size: clamp(28px, 3vw, 46px); letter-spacing: -.04em; margin-bottom: 0
 .score-bar i, .category-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--red-dark), var(--red)); }
 .score { font-size: 28px; text-align: right; }
 
-.leaderboard-section { margin: 72px 0; }
+.leaderboard-section { margin: 64px 0 72px; }
 .tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .tab { border: 1px solid var(--line); color: var(--muted); background: transparent; padding: 9px 13px; cursor: pointer; font: inherit; font-size: 12px; }
 .tab.active, .tab:hover { color: white; border-color: var(--red); background: rgba(228, 31, 43, .12); }
-.category-board { display: none; }
+.tab:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+.category-board { display: none; margin-top: 18px; padding: clamp(24px, 4vw, 48px); background: linear-gradient(145deg, var(--panel), #101012); border: 1px solid var(--line); }
 .category-board.active { display: block; }
+.category-title { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 30px; }
+.category-title > p { max-width: 560px; color: var(--muted); line-height: 1.5; margin-bottom: 0; }
 .category-row { grid-template-columns: 42px minmax(220px, 1fr) minmax(100px, 1.5fr) 170px; }
 .metric-value { text-align: right; color: var(--muted); }
 .metric-value strong { color: white; font-size: 21px; }
+
+.chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-bottom: 28px; }
+.chart-card { margin: 0; padding: 22px; background: #0d0d0f; border: 1px solid var(--line); min-width: 0; }
+.chart-card figcaption { display: grid; gap: 5px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.chart-card figcaption strong { font-size: 17px; }
+.chart-card figcaption span { color: var(--muted); font-size: 11px; line-height: 1.4; }
+.bar-chart { display: grid; gap: 14px; padding-top: 20px; }
+.chart-row { display: grid; grid-template-columns: minmax(96px, .8fr) minmax(100px, 1.5fr) 88px; gap: 12px; align-items: center; min-width: 0; }
+.chart-label { min-width: 0; }
+.chart-label strong, .chart-label small { display: block; }
+.chart-label strong { font: 800 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: white; }
+.chart-label small { color: var(--muted); font-size: 9px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-track { height: 14px; background: #26262a; border-left: 1px solid #62626b; overflow: hidden; }
+.chart-track i { display: block; height: 100%; min-width: 2px; }
+.performance-fill { background: var(--red); }
+.price-fill { background: #b7b5af; }
+.chart-value { color: #dddcd7; font: 700 11px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: right; }
+
+.machine-detail-list { border-top: 1px solid var(--line); }
+.machine-detail-card { display: grid; grid-template-columns: 36px minmax(260px, 1.4fr) minmax(150px, .7fr) minmax(120px, .55fr); gap: 18px; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--line); transition: background .15s ease; }
+.machine-detail-card:hover { background: var(--panel-soft); }
+.machine-detail-card:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+.machine-identity small, .machine-result small, .machine-price small, .machine-spec small { color: var(--muted); display: block; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.machine-identity > strong { display: block; color: var(--red); font: 900 28px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.04em; margin: 4px 0 2px; }
+.machine-identity b { display: block; font-size: 13px; }
+.machine-identity em { display: block; color: var(--muted); font: normal 10px ui-monospace, SFMono-Regular, Menlo, monospace; margin-top: 5px; overflow-wrap: anywhere; }
+.machine-result, .machine-price { text-align: right; }
+.machine-result strong, .machine-price strong { display: block; font-size: 24px; letter-spacing: -.04em; margin-top: 6px; white-space: nowrap; }
+.machine-result strong em, .machine-price strong em { color: var(--muted); font-size: 11px; font-style: normal; letter-spacing: 0; }
+.machine-price strong { color: var(--green); }
+.machine-spec-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--line); }
+.machine-spec { min-width: 0; padding: 14px 16px; background: #101012; align-self: stretch; }
+.machine-spec strong, .machine-spec em { display: block; }
+.machine-spec strong { font-size: 11px; line-height: 1.35; margin-top: 6px; overflow-wrap: anywhere; }
+.machine-spec em { color: var(--muted); font-size: 10px; font-style: normal; line-height: 1.4; margin-top: 4px; }
 
 .history-list { border-top: 1px solid var(--line); }
 .history-row { display: grid; grid-template-columns: 110px minmax(260px, 1fr) 190px 70px; gap: 18px; align-items: center; min-height: 76px; border-bottom: 1px solid var(--line); transition: background .15s ease; }
@@ -127,6 +165,12 @@ footer { min-height: 90px; border-top: 1px solid var(--line); color: var(--muted
   .method-grid { grid-template-columns: 1fr; }
   .section-heading { align-items: start; flex-direction: column; }
   .tabs { justify-content: flex-start; }
+  .category-title { align-items: start; flex-direction: column; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .machine-detail-card { grid-template-columns: 32px minmax(0, 1fr) auto; padding: 20px 0; }
+  .machine-result { grid-column: 2; text-align: left; }
+  .machine-price { grid-column: 3; grid-row: 1 / span 2; }
+  .machine-spec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ranking-row, .category-row { grid-template-columns: 32px 1fr auto; padding: 14px 0; }
   .history-row { grid-template-columns: 100px 1fr auto; padding: 14px 0; }
   .history-finished { display: none; }
@@ -143,6 +187,16 @@ footer { min-height: 90px; border-top: 1px solid var(--line); color: var(--muted
   h1 { font-size: 48px; }
   .metric-value { font-size: 11px; }
   .metric-value strong { font-size: 16px; }
+  .tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tab { text-align: left; }
+  .category-board { padding: 20px 16px; }
+  .chart-card { padding: 18px 14px; }
+  .chart-row { grid-template-columns: 76px minmax(80px, 1fr) 72px; gap: 8px; }
+  .chart-label small { display: none; }
+  .machine-detail-card { grid-template-columns: 28px minmax(0, 1fr); }
+  .machine-identity, .machine-result, .machine-price { grid-column: 2; text-align: left; }
+  .machine-price { grid-row: auto; }
+  .machine-spec-grid { grid-column: 1 / -1; grid-template-columns: 1fr; }
   .raw-meta dl { grid-template-columns: 1fr; }
   .history-row { grid-template-columns: 1fr auto; }
   .history-row .machine { grid-column: 1 / -1; grid-row: 1; }

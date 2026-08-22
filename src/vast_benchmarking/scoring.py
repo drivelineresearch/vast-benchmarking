@@ -61,15 +61,42 @@ def metric_leaderboard(
     for run in runs:
         for metric in run.get("metrics", []):
             if metric.get("name") == metric_name:
+                system = run.get("system") or {}
+                vast = run.get("vast") or {}
+                gpus = system.get("gpus") or []
+                hourly_rate = run.get("hourly_rate")
+                location = str(vast.get("geolocation") or "").strip(" ,")
                 rows.append(
                     {
                         "run_id": run["run_id"],
+                        "run_short_id": str(run["run_id"])[:8],
                         "label": run.get("label") or run.get("hostname") or run["run_id"],
                         "value": float(metric["value"]),
                         "unit": metric.get("unit", ""),
                         "machine_id": run.get("machine_id"),
+                        "offer_id": run.get("offer_id"),
+                        "instance_id": run.get("instance_id"),
+                        "hourly_rate": (
+                            float(hourly_rate) if hourly_rate is not None else None
+                        ),
+                        "verification": run.get("verification") or "unverified",
+                        "reliability_pct": (
+                            float(vast["reliability"]) * 100
+                            if vast.get("reliability") is not None
+                            else None
+                        ),
+                        "location": location or "Unknown",
                         "gpu_summary": run.get("gpu_summary", "CPU only"),
+                        "gpu_count": len(gpus),
+                        "gpu_vram_gib": (
+                            float(gpus[0].get("memory_mib") or 0) / 1024 if gpus else 0
+                        ),
                         "cpu_model": run.get("cpu_model", "Unknown CPU"),
+                        "cpu_effective": run.get("cpu_effective"),
+                        "memory_gib": float(system.get("memory_total_bytes") or 0) / 1024**3,
+                        "cuda_version": system.get("torch_cuda_version") or "Unavailable",
+                        "duration_seconds": float(run.get("duration_seconds") or 0),
+                        "annotation": run.get("annotation"),
                     }
                 )
                 break

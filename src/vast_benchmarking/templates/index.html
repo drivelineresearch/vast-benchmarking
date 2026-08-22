@@ -25,65 +25,97 @@
   <article class="kpi accent"><span>Estimated spend</span><strong>${{ '%.2f'|format(rentals.estimated_cost or 0) }}</strong><small>$10.00 campaign cap</small></article>
 </section>
 
-<section class="panel composite-panel">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow">RELATIVE COMPOSITE</p>
-      <h2>Overall leaderboard</h2>
-    </div>
-    <p>Geometric mean of available category metrics, normalized to the best stored result.</p>
-  </div>
-  {% if runs %}
-  <div class="ranking-list">
-    {% for run in runs %}
-    <a class="ranking-row" href="{{ url_for('run_detail', run_id=run.run_id) }}">
-      <span class="rank">{{ loop.index }}</span>
-      <span class="machine">
-        <strong>{{ run.label }}</strong>
-        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores{% if run.system.gpus %} · {{ run.gpu_results|length }}/{{ run.system.gpus|length }} GPUs returned{% endif %}</small>
-      </span>
-      <span class="score-bar"><i style="width: {{ '%.1f'|format(run.relative_score) }}%"></i></span>
-      <strong class="score">{{ '%.1f'|format(run.relative_score) }}</strong>
-    </a>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <strong>No benchmark results yet.</strong>
-    <span>Run the benchmark or ingest a result JSON to populate this view.</span>
-  </div>
-  {% endif %}
-</section>
-
 <section class="leaderboard-section">
   <div class="section-heading">
     <div>
-      <p class="eyebrow">RAW PERFORMANCE</p>
-      <h2>Category leaders</h2>
+      <p class="eyebrow">MACHINE-BY-MACHINE COMPARISON</p>
+      <h2>Category rankings</h2>
     </div>
-    <div class="tabs" role="tablist" aria-label="Leaderboard category">
+    <p>Choose a workload to compare measured performance, historical rental price, and the exact Vast machine behind every result.</p>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Leaderboard category">
       {% for key, board in leaderboards.items() %}
-      <button class="tab{% if loop.first %} active{% endif %}" data-tab="{{ key }}" type="button">{{ board.title }}</button>
+      <button class="tab{% if loop.first %} active{% endif %}" id="tab-{{ key }}" data-tab="{{ key }}" type="button" role="tab" aria-controls="panel-{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ board.title }}</button>
       {% endfor %}
-    </div>
   </div>
 
   {% for key, board in leaderboards.items() %}
-  <div class="category-board{% if loop.first %} active{% endif %}" data-panel="{{ key }}">
+  <section class="category-board{% if loop.first %} active{% endif %}" id="panel-{{ key }}" data-panel="{{ key }}" role="tabpanel" aria-labelledby="tab-{{ key }}"{% if not loop.first %} hidden{% endif %}>
     {% if board.rows %}
-      {% set top_value = board.rows[0].value %}
+    <div class="category-title">
+      <div>
+        <p class="eyebrow">{{ board.metric }}</p>
+        <h2>{{ board.title }}</h2>
+      </div>
+      <p>Top {{ board.rows|length }} accepted machines. Higher performance is better; rental prices are the rates captured when each benchmark ran.</p>
+    </div>
+
+    <div class="chart-grid">
+      <figure class="chart-card">
+        <figcaption>
+          <strong>Measured performance</strong>
+          <span>{{ board.title }} · {{ board.rows[0].unit }} · zero baseline</span>
+        </figcaption>
+        <div class="bar-chart" role="img" aria-label="{{ board.title }} performance by Vast machine ID">
+          {% for row in board.rows %}
+          <div class="chart-row" aria-label="Machine {{ row.machine_id }}: {{ '%.2f'|format(row.value) }} {{ row.unit }}">
+            <span class="chart-label"><strong>#{{ row.machine_id }}</strong><small>{{ row.label }}</small></span>
+            <span class="chart-track"><i class="performance-fill" style="width: {{ '%.1f'|format(row.performance_percent) }}%"></i></span>
+            <span class="chart-value">{{ '%.2f'|format(row.value) }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </figure>
+
+      <figure class="chart-card">
+        <figcaption>
+          <strong>Hourly rental price</strong>
+          <span>Same machine order · USD/hour at benchmark time · zero baseline</span>
+        </figcaption>
+        <div class="bar-chart" role="img" aria-label="Hourly rental price by Vast machine ID">
+          {% for row in board.rows %}
+          <div class="chart-row" aria-label="Machine {{ row.machine_id }}: ${{ '%.3f'|format(row.hourly_rate or 0) }} per hour">
+            <span class="chart-label"><strong>#{{ row.machine_id }}</strong><small>Offer #{{ row.offer_id }}</small></span>
+            <span class="chart-track"><i class="price-fill" style="width: {{ '%.1f'|format(row.price_percent) }}%"></i></span>
+            <span class="chart-value">${{ '%.3f'|format(row.hourly_rate or 0) }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </figure>
+    </div>
+
+    <div class="machine-detail-list">
       {% for row in board.rows %}
-      <a class="category-row" href="{{ url_for('run_detail', run_id=row.run_id) }}">
+      <a class="machine-detail-card" href="{{ url_for('run_detail', run_id=row.run_id) }}">
         <span class="rank">{{ loop.index }}</span>
-        <span class="machine"><strong>{{ row.label }}</strong><small>{{ row.gpu_summary }}</small></span>
-        <span class="category-bar"><i style="width: {{ '%.1f'|format((row.value / top_value * 100) if top_value else 0) }}%"></i></span>
-        <span class="metric-value"><strong>{{ '%.2f'|format(row.value) }}</strong> {{ row.unit }}</span>
+        <span class="machine-identity">
+          <small>VAST MACHINE ID</small>
+          <strong>#{{ row.machine_id }}</strong>
+          <b>{{ row.label }}</b>
+          <em>Offer #{{ row.offer_id }} · Instance #{{ row.instance_id }} · Run {{ row.run_short_id }}</em>
+        </span>
+        <span class="machine-result">
+          <small>{{ board.title }}</small>
+          <strong>{{ '%.2f'|format(row.value) }} <em>{{ row.unit }}</em></strong>
+        </span>
+        <span class="machine-price">
+          <small>RENTAL PRICE</small>
+          <strong>${{ '%.3f'|format(row.hourly_rate or 0) }}<em>/hr</em></strong>
+        </span>
+        <span class="machine-spec-grid">
+          <span class="machine-spec"><small>GPU</small><strong>{{ row.gpu_summary }}</strong><em>{% if row.gpu_count %}{{ '%.1f'|format(row.gpu_vram_gib) }} GiB each{% else %}No CUDA GPU{% endif %}</em></span>
+          <span class="machine-spec"><small>CPU</small><strong>{{ row.cpu_model }}</strong><em>{{ row.cpu_effective }} effective cores</em></span>
+          <span class="machine-spec"><small>HOST</small><strong>{{ '%.0f'|format(row.memory_gib) }} GiB RAM</strong><em>{{ row.location }} · CUDA {{ row.cuda_version }}</em></span>
+          <span class="machine-spec"><small>PROVIDER</small><strong>{{ row.verification }}</strong><em>{% if row.reliability_pct is not none %}{{ '%.2f'|format(row.reliability_pct) }}% reliability{% else %}Reliability unavailable{% endif %}</em></span>
+          <span class="machine-spec"><small>RUN</small><strong>{{ '%.1f'|format(row.duration_seconds) }} seconds</strong><em>{% if row.annotation and row.annotation.rating %}{{ row.annotation.rating }} · {% endif %}Open complete metrics →</em></span>
+        </span>
       </a>
       {% endfor %}
+    </div>
     {% else %}
       <div class="empty-state"><strong>No {{ board.title|lower }} data yet.</strong></div>
     {% endif %}
-  </div>
+  </section>
   {% endfor %}
 </section>
 
@@ -101,8 +133,8 @@
     <a class="history-row" href="{{ url_for('run_detail', run_id=run.run_id) }}">
       <span class="history-state {{ run.leaderboard_state }}">{{ run.leaderboard_state }}</span>
       <span class="machine">
-        <strong>{{ run.label }}</strong>
-        <small>{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
+        <strong>{% if run.machine_id %}Machine #{{ run.machine_id }} · {% endif %}{{ run.label }}</strong>
+        <small>{% if run.offer_id %}Offer #{{ run.offer_id }} · {% endif %}{% if run.instance_id %}Instance #{{ run.instance_id }} · {% endif %}{{ run.gpu_summary }} · {{ run.cpu_effective }} effective CPU cores</small>
       </span>
       <span class="history-finished">{{ run.finished_at[:19].replace('T', ' ') }} UTC</span>
       <span class="history-duration">

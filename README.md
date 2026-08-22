@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml"><img src="https://github.com/drivelineresearch/vast-benchmarking/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="assets/badges/tests.svg" alt="17 tests passing">
+  <img src="assets/badges/tests.svg" alt="18 tests passing">
   <img src="assets/badges/runtime.svg" alt="225 second maximum measured runtime">
   <img src="assets/badges/gpu-cv.svg" alt="116,501 CV images per second">
   <img src="assets/badges/effective-cpu.svg" alt="368.6 effective CPU cores">
