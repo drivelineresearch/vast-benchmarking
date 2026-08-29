@@ -33,7 +33,7 @@ dev = [
   "ruff>=0.9,<1",
 ]
 server = [
-  "gunicorn>=23,<24",
+  "gunicorn>=23,<27",
 ]
 
 [project.urls]
